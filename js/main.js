@@ -70,8 +70,11 @@ PreloadState.prototype =
 		game.load.image('musicOff', 'img/volume(mute).png');
 		game.load.image('reset', 'img/reset.png');
 		game.load.image('exit', 'img/exit.png');
-		game.load.image('start', 'img/temp_start.gif');
 		game.load.image('menu', 'img/menu.png');
+		game.load.image('start', 'img/temp_start.gif');
+		game.load.image('continue', 'img/temp_continue.png');
+		game.load.image('controls', 'img/temp_controls.png');
+		game.load.image('lvlsel', 'img/temp_levelselect.png');
 
 		//	Game sprites
 		game.load.image('lvl1', 'img/1/sprite1.png');
@@ -130,8 +133,16 @@ StartState.prototype =
 	{
 		// create assets
 		game.stage.backgroundColor = '#89CFF0';
+		setLevels();
 
 		start_button = game.add.button(game.width/2, game.height/2, 'start', startOnClick, this);
+
+		if(currlvl!=0)
+			continue_button = game.add.button(game.width/2, game.height/2 - 64, 'continue', continueOnClick, this);
+
+		controls_button = game.add.button(game.width/2, game.height/2 + 64, 'controls', controlsOnClick, this);
+
+		//lvlsel_button = game.add.button(game.width/2, game.height/2 + 128, 'lvlsel', lvlselOnClick, this);
 	},
 
 	update: function() 
@@ -151,24 +162,32 @@ PlayState.prototype =
 {
 	create: function() 
 	{
-		setLevels();
 		// create assets
-		basicScene(game);
 
-		this.level = new Puzzle(game, game.width/2 - 64, game.height/2 - 32, 
-			pieces[currlvl],puzzles[currlvl],rot[currlvl]);
+		this.level = new Puzzle(game, 
+			pos[currlvl].x, 
+			pos[currlvl].y, 
+			pieces[currlvl],
+			puzzles[currlvl],
+			rot[currlvl]);
 
-		this.lvlsprte = game.add.image(game.width/2 - 64 - 32, game.height/2 - 64,imgs[currlvl]);
-		this.lvlsprte.alpha = 0;
-		this.lvlsprte.scale.setTo(0.3);
-
-		this.wintext = game.add.text(16, 48, '', { fontSize: '32px', fill: '#fff' });
 		this.Narritive = new Subbox(game,
-			['Click and drag pieces, spacebar to rotate',
-			 'Example line 2']);
+			texts[currlvl]);
+
+		//	Load the level sprite
+		this.lvlsprte = game.add.image(this.level.x, this.level.y,imgs[currlvl]);
+		this.lvlsprte.alpha = 0;
+		this.lvlsprte.scale.setTo(imgscale[currlvl]);
+
+		//	Add extra bits if necessary
+		for (var i = 0; i < extrabits[currlvl].length; i++)
+		{
+			this.level.addp(64 + Math.random() * 600, 32 + Math.random() * 400,extrabits[currlvl][i]);
+		}
+
+		basicScene(game,this);
 		//game.time.advancedTiming = true;
 		//this.fpstext = game.add.text(16, 16, 'fps = ', { fontSize: '32px', fill: '#fff' });
-		this.loadNextState = false;
 	},
 
 	update: function() 
@@ -176,34 +195,11 @@ PlayState.prototype =
 		// run game loop
 
 		//this.fpstext.text = 'fps = ' + game.time.fps;
-
-		/*if (victory) 
-		{
-			this.wintext.text = 'You win! Click for next level';
-			win_sound.play('',0,0.5,false);
-			victory = false;
-			this.waitfornextclick = true;
-			this.lvlsprte.alpha = 1;
-			this.level.hide();
-		}
-		else if(this.lvlsprte.alpha == 0)
-		{
-			this.level.update();
-		}
-		if(game.input.activePointer.leftButton.isDown && this.waitfornextclick)
-		{
-			this.waitfornextclick = false;
-			currlvl++;
-			if (currlvl<4) 
-				game.state.start('Play');
-			else
-				game.state.start('GameOver');
-		}*/
 		basicUpdate(game,this);
 
 		if(this.loadNextState)
 		{
-			if (currlvl<4) 
+			if (currlvl<totalLvls) 
 				game.state.start('Play');
 			else
 				game.state.start('GameOver');	
@@ -226,11 +222,10 @@ GameOver.prototype =
 
 	create: function() 
 	{
-		currlvl = 0;
-		setLevels();
 		// create assets
 		this.wintext = game.add.text(16, 48, 
 			'Congradulations, you have beaten the demo\nClick to start again', { fontSize: '32px', fill: '#fff' });
+		currlvl = 0;
 	},
 
 	update: function() 
@@ -238,8 +233,45 @@ GameOver.prototype =
 		// run game loop
 		if(game.input.activePointer.leftButton.isDown)
 		{
-			game.state.start('Play');
+			game.state.start('Start');
 		}
+
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	LEVEL SELECT STATE
+//	Probably won't need this but keep for now
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+var LvlSelState = function(game) {};
+LvlSelState.prototype = 
+{
+	preload: function() 
+	{
+		// preload assets
+	},
+
+	create: function() 
+	{
+		//for (var i = 1; i <= 18; i++) 
+		{
+
+			game.add.button(32, game.height/2 - 64, 'shell', 
+				function(button) 
+			{ 
+				currlvl = 2; 
+				console.log(currlvl);
+				game.state.start('Play'); 
+			}, this);
+		}
+
+		basicScene(game,this);
+	},
+
+	update: function() 
+	{
+		// run game loop
 
 	}
 }
@@ -255,57 +287,7 @@ game.state.add('Boot',BootState);
 game.state.add('Preload',PreloadState);
 game.state.add('Start',StartState);
 game.state.add('Play' ,PlayState);
+game.state.add('lvlselect' ,LvlSelState);
 game.state.add('GameOver',GameOver);
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	Level 1 STATE
-//	Where the game is played
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var Level_1 = function(game) {};
-Level_1.prototype = 
-{
-	create: function() 
-	{
-		// create assets
-		basicScene(game);
-
-		this.level = new Puzzle(game, game.width/2 - 64, game.height/2 - 64, 
-			[6,3],
-			[{x:0,y:0},{x:0,y:1},{x:0,y:2},{x:1,y:0},{x:1,y:1},{x:2,y:0},
-	 		 {x:1,y:2},{x:2,y:2},{x:2,y:1}],
-			false
-			);
-
-		this.lvlsprte = game.add.image(game.width/2 - 64, game.height/2 - 64,'lvl1');
-		this.lvlsprte.alpha = 0;
-		//this.lvlsprte.scale.setTo(0.3);
-
-		this.wintext = game.add.text(16, 48, '', { fontSize: '32px', fill: '#fff' });
-		this.Narritive = new Subbox(game,
-			['Example line 1 which will appear timed with the narritive',
-			 'Example line 2']);
-		
-		this.loadNextState = false;
-	},
-
-	update: function() 
-	{
-		basicUpdate(game,this);
-
-		if(this.loadNextState)
-		{
-			if (currlvl<4) 
-				game.state.start('Play');
-			else
-				game.state.start('GameOver');	
-		}
-	}
-}
-
-game.state.add('lvl1',Level_1);
-
-
 
 game.state.start('Boot');
