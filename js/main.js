@@ -7,11 +7,16 @@
 // init game
 var game = new Phaser.Game(800, 600, Phaser.AUTO);
 
+//	current level player is up to
+var currlvl = 0;
+
 // sound variables
 var click_sound;
 var win_sound;
 var drop_sound;
 var piano_song;
+
+var music_isplaying = false;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -55,9 +60,10 @@ PreloadState.prototype =
 	{
 		// preload assets
 		//	Game pieces
-		game.load.image('piece', 'img/piece.png');
-		game.load.image('highlight', 'img/selection.png');
+		game.load.image('piece', 'img/pieceGrey.png');
+		game.load.image('highlight', 'img/selectionGrey.png');
 		game.load.image('shell', 'img/shell.png');
+		game.load.image('shadow', 'img/blackbox.png');
 
 		//	Menu items
 		game.load.image('musicOn', 'img/volume.png');
@@ -120,6 +126,7 @@ StartState.prototype =
 	create: function() 
 	{
 		// create assets
+		game.stage.backgroundColor = '#89CFF0';
 	},
 
 	update: function() 
@@ -133,7 +140,6 @@ StartState.prototype =
 //	PLAY STATE
 //	Where the game is played
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var currlvl = 0;
 
 var PlayState = function(game) {};
 PlayState.prototype = 
@@ -142,16 +148,12 @@ PlayState.prototype =
 	{
 		setLevels();
 		// create assets
-		game.stage.backgroundColor = '#172d3b';
-		
-		//	Music button
-		music_button = game.add.button(4, 4, 'musicOff', musicOnClick, this);
-		music_button.scale.setTo(0.3);
+		basicScene();
 
 		this.level = new Puzzle(game, game.width/2 - 64, game.height/2 - 32, 
 			pieces[currlvl],puzzles[currlvl],rot[currlvl]);
 
-		this.lvlsprte = game.add.image(64, game.height/2 - 32,imgs[currlvl]);
+		this.lvlsprte = game.add.image(game.width/2 - 64 - 32, game.height/2 - 64,imgs[currlvl]);
 		this.lvlsprte.alpha = 0;
 		this.lvlsprte.scale.setTo(0.3);
 
@@ -160,7 +162,7 @@ PlayState.prototype =
 			'Click and drag pieces, spacebar to rotate', { fontSize: '16px', fill: '#fff' });
 		//game.time.advancedTiming = true;
 		//this.fpstext = game.add.text(16, 16, 'fps = ', { fontSize: '32px', fill: '#fff' });
-		
+		this.loadNextState = false;
 	},
 
 	update: function() 
@@ -169,15 +171,16 @@ PlayState.prototype =
 
 		//this.fpstext.text = 'fps = ' + game.time.fps;
 
-		if (victory) 
+		/*if (victory) 
 		{
 			this.wintext.text = 'You win! Click for next level';
 			win_sound.play('',0,0.5,false);
 			victory = false;
 			this.waitfornextclick = true;
 			this.lvlsprte.alpha = 1;
+			this.level.hide();
 		}
-		else
+		else if(this.lvlsprte.alpha == 0)
 		{
 			this.level.update();
 		}
@@ -189,6 +192,15 @@ PlayState.prototype =
 				game.state.start('Play');
 			else
 				game.state.start('GameOver');
+		}*/
+		basicUpdate(game,this);
+
+		if(this.loadNextState)
+		{
+			if (currlvl<4) 
+				game.state.start('Play');
+			else
+				game.state.start('GameOver');	
 		}
 	}
 }

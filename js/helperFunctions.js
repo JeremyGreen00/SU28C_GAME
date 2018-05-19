@@ -19,17 +19,72 @@ var makeRandomString = function()
     return word;
 }
 
+//	Toggles music
 var musicOnClick = function(button)
 {
-	if (piano_song.isPlaying == false)
+	if (music_isplaying == false)
 	{
 		piano_song.play('',0,0.5,true);
 		button.loadTexture('musicOn');
+		music_isplaying = true;
 	}
 	else
 	{
 		piano_song.stop();
 		button.loadTexture('musicOff');
+		music_isplaying = false;
+	}
+}
+
+//	Reset button
+var resetOnClick = function(button)
+{
+	game.state.start(game.state.current);
+}
+
+//	Create general assets
+var basicScene = function()
+{
+	game.stage.backgroundColor = '#89CFF0';
+	
+	//	Music button
+	if (music_isplaying)
+	{
+		music_button = game.add.button(4, 4, 'musicOn', musicOnClick, this);
+		piano_song.play('',0,0.5,true);
+	}
+	else 
+	{
+		music_button = game.add.button(4, 4, 'musicOff', musicOnClick, this);
+	}
+	music_button.scale.setTo(0.3);
+
+	//	Reset button
+	reset_button = game.add.button(4 + Math.floor(175*0.4), 4, 'reset', resetOnClick, this);
+	reset_button.scale.setTo(0.6);
+}
+
+//	Run the scene
+var basicUpdate = function(game,lvl)
+{
+	if (victory) 
+	{
+		lvl.wintext.text = 'You win! Click for next level';
+		win_sound.play('',0,0.5,false);
+		victory = false;
+		lvl.waitfornextclick = true;
+		lvl.lvlsprte.alpha = 1;
+		lvl.level.hide();
+	}
+	else if(lvl.lvlsprte.alpha == 0)
+	{
+		lvl.level.update();
+	}
+	if(game.input.activePointer.leftButton.isDown && lvl.waitfornextclick)
+	{
+		lvl.waitfornextclick = false;
+		currlvl++;
+		lvl.loadNextState = true;
 	}
 }
 
