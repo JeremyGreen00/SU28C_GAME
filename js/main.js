@@ -70,8 +70,11 @@ PreloadState.prototype =
 		game.load.image('musicOff', 'img/volume(mute).png');
 		game.load.image('reset', 'img/reset.png');
 		game.load.image('exit', 'img/exit.png');
+		game.load.image('start', 'img/temp_start.gif');
+		game.load.image('menu', 'img/menu.png');
 
 		//	Game sprites
+		game.load.image('lvl1', 'img/1/sprite1.png');
 		game.load.image('lvl2', 'img/2/sprite2.png');
 		game.load.image('lvl5', 'img/5/sprite5.png');
 		game.load.image('lvl8', 'img/8/sprite8.png');
@@ -105,7 +108,7 @@ PreloadState.prototype =
 		// run game loop
 		if (game.cache.isSoundDecoded('song1'))
 		{
-			game.state.start('Play');
+			game.state.start('Start');
 		}
 	}
 }
@@ -127,6 +130,8 @@ StartState.prototype =
 	{
 		// create assets
 		game.stage.backgroundColor = '#89CFF0';
+
+		start_button = game.add.button(game.width/2, game.height/2, 'start', startOnClick, this);
 	},
 
 	update: function() 
@@ -148,7 +153,7 @@ PlayState.prototype =
 	{
 		setLevels();
 		// create assets
-		basicScene();
+		basicScene(game);
 
 		this.level = new Puzzle(game, game.width/2 - 64, game.height/2 - 32, 
 			pieces[currlvl],puzzles[currlvl],rot[currlvl]);
@@ -158,8 +163,9 @@ PlayState.prototype =
 		this.lvlsprte.scale.setTo(0.3);
 
 		this.wintext = game.add.text(16, 48, '', { fontSize: '32px', fill: '#fff' });
-		this.controls = game.add.text(16, game.height - 48, 
-			'Click and drag pieces, spacebar to rotate', { fontSize: '16px', fill: '#fff' });
+		this.Narritive = new Subbox(game,
+			['Click and drag pieces, spacebar to rotate',
+			 'Example line 2']);
 		//game.time.advancedTiming = true;
 		//this.fpstext = game.add.text(16, 16, 'fps = ', { fontSize: '32px', fill: '#fff' });
 		this.loadNextState = false;
@@ -250,5 +256,56 @@ game.state.add('Preload',PreloadState);
 game.state.add('Start',StartState);
 game.state.add('Play' ,PlayState);
 game.state.add('GameOver',GameOver);
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Level 1 STATE
+//	Where the game is played
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+var Level_1 = function(game) {};
+Level_1.prototype = 
+{
+	create: function() 
+	{
+		// create assets
+		basicScene(game);
+
+		this.level = new Puzzle(game, game.width/2 - 64, game.height/2 - 64, 
+			[6,3],
+			[{x:0,y:0},{x:0,y:1},{x:0,y:2},{x:1,y:0},{x:1,y:1},{x:2,y:0},
+	 		 {x:1,y:2},{x:2,y:2},{x:2,y:1}],
+			false
+			);
+
+		this.lvlsprte = game.add.image(game.width/2 - 64, game.height/2 - 64,'lvl1');
+		this.lvlsprte.alpha = 0;
+		//this.lvlsprte.scale.setTo(0.3);
+
+		this.wintext = game.add.text(16, 48, '', { fontSize: '32px', fill: '#fff' });
+		this.Narritive = new Subbox(game,
+			['Example line 1 which will appear timed with the narritive',
+			 'Example line 2']);
+		
+		this.loadNextState = false;
+	},
+
+	update: function() 
+	{
+		basicUpdate(game,this);
+
+		if(this.loadNextState)
+		{
+			if (currlvl<4) 
+				game.state.start('Play');
+			else
+				game.state.start('GameOver');	
+		}
+	}
+}
+
+game.state.add('lvl1',Level_1);
+
+
 
 game.state.start('Boot');

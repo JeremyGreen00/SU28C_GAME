@@ -39,11 +39,23 @@ var musicOnClick = function(button)
 //	Reset button
 var resetOnClick = function(button)
 {
-	game.state.start(game.state.current);
+	game.state.restart();
+}
+
+//	starts game
+var startOnClick = function(button)
+{
+	game.state.start('lvl1');
+}
+
+//	Return to menu
+var menuOnClick = function(button)
+{
+	game.state.start('Start');
 }
 
 //	Create general assets
-var basicScene = function()
+var basicScene = function(game)
 {
 	game.stage.backgroundColor = '#89CFF0';
 	
@@ -62,6 +74,10 @@ var basicScene = function()
 	//	Reset button
 	reset_button = game.add.button(4 + Math.floor(175*0.4), 4, 'reset', resetOnClick, this);
 	reset_button.scale.setTo(0.6);
+
+	//	Menu button
+	menu_button = game.add.button(game.width - 99, 4, 'menu', menuOnClick, this);
+	menu_button.scale.setTo(0.1);
 }
 
 //	Run the scene
@@ -69,7 +85,7 @@ var basicUpdate = function(game,lvl)
 {
 	if (victory) 
 	{
-		lvl.wintext.text = 'You win! Click for next level';
+		lvl.Narritive.set('You win! Click for next level');
 		win_sound.play('',0,0.5,false);
 		victory = false;
 		lvl.waitfornextclick = true;

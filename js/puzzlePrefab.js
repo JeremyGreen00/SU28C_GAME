@@ -64,7 +64,7 @@ var Puzzle = function(game, pos_x, pos_y, pieceSizes, shape, randomRotation)
 	for (var i = 0; i < pieceSizes.length; i++) 
 	{
 		var chunkx = (j * gridSize + 32) % game.width;
-		var chunky = 64 + Math.floor((j * gridSize + 32) / game.width)*gridSize*3;
+		var chunky = 128 + Math.floor((j * gridSize + 32) / game.width)*gridSize*3;
 
 		this.CHUNKS[i] = new PPiece(chunkx, chunky, this.sh.slice(j,j + pieceSizes[i]));
 
