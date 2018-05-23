@@ -1,3 +1,9 @@
+//	Game by Special Unit 28C
+//	Design: Yuming Li
+//	Art: Dongbo(Bob)
+//	Programming: Jeremy Green
+//	Sound: Yuming Li
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	HELPER FUNCTIONS
@@ -10,13 +16,21 @@ var makeRandomString = function()
     var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789*#%&!";
     var word = "";
     
-    var wordLen = 10;
+    var wordLen = 20;
     for (var i = 0; i < wordLen; i++) 
     {
         var index = Math.floor(Math.random() * letters.length);
         word += letters.charAt(index);
     }
     return word;
+}
+
+//	Returns a random color
+var randomColor = function() 
+{
+    var colors = [0x89cff0, 0xFF9999, 0xFFFF99, 0x99FF99, 0xFF99FF];
+
+    return colors[Math.floor(Math.random() * colors.length)];
 }
 
 //	Toggles music
@@ -39,6 +53,7 @@ var musicOnClick = function(button)
 //	Reset button
 var resetOnClick = function(button)
 {
+	setLevels();
 	game.state.restart();
 }
 
@@ -74,6 +89,16 @@ var menuOnClick = function(button)
 	game.state.start('Start');
 }
 
+//	Loads the next state
+var nextlvlOnClick = function(button)
+{
+	currlvl++;
+	if (currlvl<totalLvls) 
+		game.state.start('Play');
+	else
+		game.state.start('GameOver');	
+}
+
 //	Create general assets
 var basicScene = function(game, lvl)
 {
@@ -83,7 +108,6 @@ var basicScene = function(game, lvl)
 	if (music_isplaying)
 	{
 		music_button = game.add.button(4, 4, 'musicOn', musicOnClick, this);
-		piano_song.play('',0,0.5,true);
 	}
 	else 
 	{
@@ -96,11 +120,10 @@ var basicScene = function(game, lvl)
 	reset_button.scale.setTo(0.3);
 
 	//	Menu button
-	menu_button = game.add.button(game.width - 99, 4, 'menu', menuOnClick, this);
+	menu_button = game.add.button(game.width - 103, 4, 'menu', menuOnClick, this);
 	menu_button.scale.setTo(0.1);
 
-	//	For checking when to load to next state
-	lvl.loadNextState = false;
+	lvl.levelwon = false;
 }
 
 //	Run the scene
@@ -109,20 +132,20 @@ var basicUpdate = function(game,lvl)
 	if (victory) 
 	{
 		lvl.Narritive.set('You win! Click for next level');
+		//lvl.Narritive.stop();
 		win_sound.play('',0,0.5,false);
 		victory = false;
-		lvl.waitfornextclick = true;
-		lvl.lvlsprte.alpha = 1;
+		lvl.levelwon = true;
 		lvl.level.hide();
+
+		game.add.button(32, game.width/2, 'next', nextlvlOnClick, this);
 	}
-	else if(lvl.lvlsprte.alpha == 0)
+	else if (lvl.levelwon == false)
 	{
 		lvl.level.update();
 	}
-	if(game.input.activePointer.leftButton.isDown && lvl.waitfornextclick)
+	if (lvl.levelwon)
 	{
-		lvl.waitfornextclick = false;
-		currlvl++;
-		lvl.loadNextState = true;
+		if(lvl.lvlsprte.alpha < 1) lvl.lvlsprte.alpha += 0.01;
 	}
 }

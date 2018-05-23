@@ -66,22 +66,41 @@ PreloadState.prototype =
 		game.load.image('shadow', 'img/blackbox.png');
 
 		//	Menu items
-		game.load.image('musicOn', 'img/volume.png');
-		game.load.image('musicOff', 'img/volume(mute).png');
-		game.load.image('reset', 'img/reset.png');
-		game.load.image('exit', 'img/exit.png');
-		game.load.image('menu', 'img/menu.png');
-		game.load.image('start', 'img/temp_start.gif');
-		game.load.image('continue', 'img/temp_continue.png');
-		game.load.image('controls', 'img/temp_controls.png');
-		game.load.image('lvlsel', 'img/temp_levelselect.png');
+		game.load.image('start', 'img/buttons/temp_start.gif');
+		game.load.image('controls', 'img/buttons/temp_controls.png');
+		game.load.image('lvlsel', 'img/buttons/temp_levelselect.png');
+		game.load.image('continue', 'img/buttons/temp_continue.png');
+
+		//	Game buttons
+		game.load.image('musicOn', 'img/buttons/volume.png');
+		game.load.image('musicOff', 'img/buttons/volume(mute).png');
+		game.load.image('reset', 'img/buttons/reset.png');
+		game.load.image('exit', 'img/buttons/exit.png');
+		game.load.image('menu', 'img/buttons/menu.png');
+		game.load.image('next', 'img/buttons/Next_button.png');
 
 		//	Game sprites
 		game.load.image('lvl1', 'img/1/sprite1.png');
 		game.load.image('lvl2', 'img/2/sprite2.png');
+		game.load.image('lvl3', 'img/3/sprite3.png');
+		game.load.image('lvl4', 'img/4/sprite4.png');
 		game.load.image('lvl5', 'img/5/sprite5.png');
+		game.load.image('lvl6', 'img/6/sprite6.png');
+		game.load.image('lvl7', 'img/7/sprite7.png');
 		game.load.image('lvl8', 'img/8/sprite8.png');
+		game.load.image('lvl9', 'img/9/sprite9.png');
+		game.load.image('lvl10', 'img/10/sprite10.png');
 		game.load.image('lvl11', 'img/11/sprite11.png');
+		game.load.image('lvl12', 'img/12/sprite12.png');
+		game.load.image('lvl13', 'img/13/sprite13.png');
+		game.load.image('lvl14', 'img/14/sprite14.png');
+		game.load.image('lvl15', 'img/15/sprite15.png');
+		game.load.image('lvl16', 'img/16/sprite16.png');
+		game.load.image('lvl17', 'img/17/sprite17.png');
+		game.load.image('lvl18', 'img/18/sprite18.png');
+
+		//	Level select icons
+		game.load.atlas('iconsAtlas','img/lvl_icons/lvl_icons.png','img/lvl_icons/lvl_icons.json');
 
 		//	Sound assets
 		game.load.audio('click', 'audio/se/click.wav');
@@ -133,6 +152,19 @@ StartState.prototype =
 	{
 		// create assets
 		game.stage.backgroundColor = '#89CFF0';
+
+		//	Music button
+		if (music_isplaying)
+		{
+			music_button = game.add.button(4, 4, 'musicOn', musicOnClick, this);
+		}
+		else 
+		{
+			music_button = game.add.button(4, 4, 'musicOff', musicOnClick, this);
+		}
+		music_button.scale.setTo(0.15);
+
+		//	Set level data
 		setLevels();
 
 		start_button = game.add.button(game.width/2, game.height/2, 'start', startOnClick, this);
@@ -142,7 +174,7 @@ StartState.prototype =
 
 		controls_button = game.add.button(game.width/2, game.height/2 + 64, 'controls', controlsOnClick, this);
 
-		//lvlsel_button = game.add.button(game.width/2, game.height/2 + 128, 'lvlsel', lvlselOnClick, this);
+		lvlsel_button = game.add.button(game.width/2, game.height/2 + 128, 'lvlsel', lvlselOnClick, this);
 	},
 
 	update: function() 
@@ -169,13 +201,15 @@ PlayState.prototype =
 			pos[currlvl].y, 
 			pieces[currlvl],
 			puzzles[currlvl],
-			rot[currlvl]);
+			true);
 
 		this.Narritive = new Subbox(game,
 			texts[currlvl]);
 
 		//	Load the level sprite
-		this.lvlsprte = game.add.image(this.level.x, this.level.y,imgs[currlvl]);
+		this.lvlsprte = game.add.image( this.level.x + pos[currlvl].imgoffSetX, 
+										this.level.y + pos[currlvl].imgoffSetY,
+										imgs[currlvl]);
 		this.lvlsprte.alpha = 0;
 		this.lvlsprte.scale.setTo(imgscale[currlvl]);
 
@@ -196,14 +230,6 @@ PlayState.prototype =
 
 		//this.fpstext.text = 'fps = ' + game.time.fps;
 		basicUpdate(game,this);
-
-		if(this.loadNextState)
-		{
-			if (currlvl<totalLvls) 
-				game.state.start('Play');
-			else
-				game.state.start('GameOver');	
-		}
 	}
 }
 
@@ -231,7 +257,7 @@ GameOver.prototype =
 	update: function() 
 	{
 		// run game loop
-		if(game.input.activePointer.leftButton.isDown)
+		if(game.input.activePointer.isDown)
 		{
 			game.state.start('Start');
 		}
@@ -254,16 +280,20 @@ LvlSelState.prototype =
 
 	create: function() 
 	{
-		//for (var i = 1; i <= 18; i++) 
+		for (var i = 1; i <= 18; i++) 
 		{
+			var bx = -64-16 + (i * 128) % (game.width ) + Math.floor( (i * 128) / (game.width ) ) * 32;
+			var by = 64 + Math.floor( (i * 128) / (game.width ) ) * 128;
 
-			game.add.button(32, game.height/2 - 64, 'shell', 
+			lvl_button = game.add.button(bx, by, 'iconsAtlas', 
 				function(button) 
 			{ 
-				currlvl = 2; 
-				console.log(currlvl);
+				currlvl = button.lvlid; 
+				//console.log(currlvl);
 				game.state.start('Play'); 
-			}, this);
+			}, this, 'Base_lvl ('+i+')', 'Base_lvl ('+i+')', 'Base_lvl ('+i+')');
+
+			lvl_button.lvlid = i-1;
 		}
 
 		basicScene(game,this);
