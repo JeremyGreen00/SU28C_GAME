@@ -29,6 +29,9 @@ var Puzzle = function(game, pos_x, pos_y, pieceSizes, shape, randomRotation)
 
 	this.fade = false;
 
+	//	Used for hint function
+	this.chunckSizes = pieceSizes;
+
 	justPlaced = false;
 	victory = false;
 	currid = "";
@@ -265,4 +268,29 @@ Puzzle.prototype.show = function()
 			this.CHUNKS[i].bits[j].alpha = 1;
 		}
 	}	
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	PUZZLE PREFAB
+// 	Shows a hint for the puzzle
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Puzzle.prototype.hint = function() 
+{
+	var i = Math.floor(Math.random() * this.chunckSizes.length)
+	var bitIn = 0;
+
+	//	grab index range of shells that make up chunck
+	for (var j = 0; j < i; j++) 
+	{
+		bitIn += this.chunckSizes[j];
+	}
+
+	//	color those shells the same as the associative chunck
+	for (var j = bitIn; j < bitIn +  this.chunckSizes[i]; j++) 
+	{
+		this.shells[j].tint = this.CHUNKS[i].color;
+	}
+		
 }

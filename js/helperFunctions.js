@@ -118,10 +118,26 @@ var basicScene = function(game, lvl)
 	//	Reset button
 	reset_button = game.add.button(4 + Math.floor(175*0.2), 4, 'reset', resetOnClick, this);
 	reset_button.scale.setTo(0.3);
+	reset_button.smoothed = false;
 
 	//	Menu button
-	menu_button = game.add.button(game.width - 103, 4, 'menu', menuOnClick, this);
-	menu_button.scale.setTo(0.1);
+	menu_button = game.add.button(game.width - 27*4 - 4, 4, 'menu', menuOnClick, this);
+	menu_button.scale.setTo(4);
+	menu_button.smoothed = false;
+
+	hint_button = game.add.button(game.width - 209, 4, 'hint', 
+				function(button) 
+			{ 
+				if (button.maxH > 0)  {
+					button.currlvl.hint();
+					button.maxH--;
+					if (button.maxH <= 0) button.loadTexture( 'hintX');
+				}
+			}, this);
+	hint_button.scale.setTo(4);
+	hint_button.smoothed = false;
+	hint_button.currlvl = lvl.level;
+	hint_button.maxH = 3;
 
 	lvl.levelwon = false;
 }

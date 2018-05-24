@@ -76,7 +76,10 @@ PreloadState.prototype =
 		game.load.image('musicOff', 'img/buttons/volume(mute).png');
 		game.load.image('reset', 'img/buttons/reset.png');
 		game.load.image('exit', 'img/buttons/exit.png');
-		game.load.image('menu', 'img/buttons/menu.png');
+		game.load.image('menu', 'img/buttons/Menu.png');
+		game.load.image('hint', 'img/buttons/Hint.png');
+		game.load.image('hintX', 'img/buttons/Hint_disabled.png');
+		game.load.image('hintH', 'img/buttons/Hint_highlight.png');
 		game.load.image('next', 'img/buttons/Next_button.png');
 
 		//	Game sprites
@@ -280,10 +283,10 @@ LvlSelState.prototype =
 
 	create: function() 
 	{
-		for (var i = 1; i <= 18; i++) 
+		for (var i = 1; i <= totalLvls; i++) 
 		{
 			var bx = -64-16 + (i * 128) % (game.width ) + Math.floor( (i * 128) / (game.width ) ) * 32;
-			var by = 64 + Math.floor( (i * 128) / (game.width ) ) * 128;
+			var by = 128 + Math.floor( (i * 128) / (game.width ) ) * 128;
 
 			lvl_button = game.add.button(bx, by, 'iconsAtlas', 
 				function(button) 
