@@ -18,6 +18,20 @@ var piano_song;
 
 var music_isplaying = false;
 
+//  The Google WebFont Loader.
+WebFontConfig = 
+{
+    //  'active' means all requested fonts have finished loading
+    //  We set a 1 second delay before calling 'createText'.
+    //  For some reason if we don't the browser cannot render the text the first time it's created.
+    active: function() { game.time.events.add(Phaser.Timer.SECOND, createText, this); },
+
+    //  The Google Fonts we want to load (specify as many as you like in the array)
+    google: {
+      families: ['East Sea Dokdo']
+    }
+};
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	BOOT STATE
@@ -76,31 +90,31 @@ PreloadState.prototype =
 		game.load.image('musicOff', 'img/buttons/volume(mute).png');
 		game.load.image('reset', 'img/buttons/reset.png');
 		game.load.image('exit', 'img/buttons/exit.png');
-		game.load.image('menu', 'img/buttons/Menu.png');
-		game.load.image('hint', 'img/buttons/Hint.png');
-		game.load.image('hintX', 'img/buttons/Hint_disabled.png');
-		game.load.image('hintH', 'img/buttons/Hint_highlight.png');
+		game.load.image('menu', 'img/buttons/menu.png');
+		game.load.image('hint', 'img/buttons/hint.png');
+		game.load.image('hintX', 'img/buttons/hint_disabled.png');
+		game.load.image('hintH', 'img/buttons/hint_highlight.png');
 		game.load.image('next', 'img/buttons/Next_button.png');
 
 		//	Game sprites
-		game.load.image('lvl1', 'img/1/sprite1.png');
-		game.load.image('lvl2', 'img/2/sprite2.png');
-		game.load.image('lvl3', 'img/3/sprite3.png');
-		game.load.image('lvl4', 'img/4/sprite4.png');
-		game.load.image('lvl5', 'img/5/sprite5.png');
-		game.load.image('lvl6', 'img/6/sprite6.png');
-		game.load.image('lvl7', 'img/7/sprite7.png');
-		game.load.image('lvl8', 'img/8/sprite8.png');
-		game.load.image('lvl9', 'img/9/sprite9.png');
-		game.load.image('lvl10', 'img/10/sprite10.png');
-		game.load.image('lvl11', 'img/11/sprite11.png');
-		game.load.image('lvl12', 'img/12/sprite12.png');
-		game.load.image('lvl13', 'img/13/sprite13.png');
-		game.load.image('lvl14', 'img/14/sprite14.png');
-		game.load.image('lvl15', 'img/15/sprite15.png');
-		game.load.image('lvl16', 'img/16/sprite16.png');
-		game.load.image('lvl17', 'img/17/sprite17.png');
-		game.load.image('lvl18', 'img/18/sprite18.png');
+		game.load.image('lvl1', 'img/sprites/sprite1.png');
+		game.load.image('lvl2', 'img/sprites/sprite2.png');
+		game.load.image('lvl3', 'img/sprites/sprite3.png');
+		game.load.image('lvl4', 'img/sprites/sprite4.png');
+		game.load.image('lvl5', 'img/sprites/sprite5.png');
+		game.load.image('lvl6', 'img/sprites/sprite6.png');
+		game.load.image('lvl7', 'img/sprites/sprite7.png');
+		game.load.image('lvl8', 'img/sprites/sprite8.png');
+		game.load.image('lvl9', 'img/sprites/sprite9.png');
+		/*game.load.image('lvl10', 'img/sprites/sprite10.png');
+		game.load.image('lvl11', 'img/sprites/sprite11.png');
+		game.load.image('lvl12', 'img/sprites/sprite12.png');
+		game.load.image('lvl13', 'img/sprites/sprite13.png');
+		game.load.image('lvl14', 'img/sprites/sprite14.png');
+		game.load.image('lvl15', 'img/sprites/sprite15.png');
+		game.load.image('lvl16', 'img/sprites/sprite16.png');
+		game.load.image('lvl17', 'img/sprites/sprite17.png');
+		game.load.image('lvl18', 'img/sprites/sprite18.png');*/
 
 		//	Level select icons
 		game.load.atlas('iconsAtlas','img/lvl_icons/lvl_icons.png','img/lvl_icons/lvl_icons.json');
@@ -112,6 +126,9 @@ PreloadState.prototype =
 
 		//	Music
 		game.load.audio('song1', 'audio/bgm/storytelling-piano.ogg');
+
+		//  Load the Google WebFont Loader script
+    	game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 	},
 
 	create: function() 
@@ -154,7 +171,7 @@ StartState.prototype =
 	create: function() 
 	{
 		// create assets
-		game.stage.backgroundColor = '#89CFF0';
+		game.stage.backgroundColor = '#eeeeee';
 
 		//	Music button
 		if (music_isplaying)

@@ -29,8 +29,12 @@ var setLevels = function()
 	imgs[lc] = 'lvl1';
 	rot[lc] = true;
 
-	texts[lc] = ['Click and drag pieces, spacebar to rotate',
-				 'Example line 2'];
+	texts[lc] = ['So let’s begin. Click and drag to fill the space, right click to rotate',
+				 'So let’s begin. Click and drag to fill the space, right click to rotate' +
+				 '\nWhat does game development mean to you?',
+				 'So let’s begin. Click and drag to fill the space, right click to rotate' +
+				 '\nWhat does game development mean to you?' + 
+				 '\nI think it’s just like playing a puzzle game where you put different blocks into the frame.'];
 
 	imgscale[lc] = 1;
 	extrabits[lc] = [];
@@ -55,8 +59,9 @@ var setLevels = function()
 	imgs[lc] = 'lvl2';
 	rot[lc] = true;
 
-	texts[lc] = ['Click and drag pieces, spacebar to rotate',
-				 'Example line 2'];
+	texts[lc] = ['The game creation process is fun because you are the creator. ',
+				'The game creation process is fun because you are the creator.' +
+				'\nYou have all the freedom in the world to put whatever you want in the game.'];
 
 	imgscale[lc] = 0.5;
 	extrabits[lc] = [];
@@ -80,8 +85,9 @@ var setLevels = function()
 	imgs[lc] = 'lvl3';
 	rot[lc] = true;
 
-	texts[lc] = ['Click and drag pieces, spacebar to rotate',
-				 'Example line 2'];
+	texts[lc] = ['These blocks are like the tools and materials you use in game development.',
+				'These blocks are like the tools and materials you use in game development.' + 
+				'\nSometimes they are meant to be modified.'];
 
 	imgscale[lc] = 0.8;
 	extrabits[lc] = [];
@@ -110,8 +116,9 @@ var setLevels = function()
 	imgs[lc] = 'lvl4';
 	rot[lc] = true;
 
-	texts[lc] = ['Click and drag pieces, spacebar to rotate',
-				 'Example line 2'];
+	texts[lc] = ['If you mess up, you can click the reset button at the top of the screen.',
+				'If you mess up, you can click the reset button at the top of the screen.' +
+				'\nWhen you get lost in your thoughts, it might be helpful to reset your mind.'];
 
 	imgscale[lc] = 0.45;
 	extrabits[lc] = [];
@@ -141,8 +148,12 @@ var setLevels = function()
 	imgs[lc] = 'lvl5';
 	rot[lc] = true;
 
-	texts[lc] = ['Click and drag pieces, spacebar to rotate',
-				 'Example line 2'];
+	texts[lc] = ['It might seem overwhelming at first.',
+				'It might seem overwhelming at first.'+
+				'\nHowever, some blocks are unique and can only be placed at certain area.',
+				'It might seem overwhelming at first.'+
+				'\nHowever, some blocks are unique and can only be placed at certain area.'+
+				'\nIt will be much easier once you learn the limitation.'];
 
 	imgscale[lc] = 0.54;
 	extrabits[lc] = 
@@ -170,8 +181,8 @@ var setLevels = function()
 	imgs[lc] = 'lvl6';
 	rot[lc] = true;
 
-	texts[lc] = ['Click and drag pieces, spacebar to rotate',
-				 'Example line 2'];
+	texts[lc] = ['Even though making the game is so much fun,'+
+				'\nit is actually difficult to make the game fun.'];
 
 	imgscale[lc] = 0.8;
 	extrabits[lc] = [];
@@ -196,8 +207,9 @@ var setLevels = function()
     imgs[lc] = 'lvl7';
     rot[lc] = true;
     
-    texts[lc] = ['Level 7 text',
-				 'Example line 2'];
+    texts[lc] = ['You will eventually learn how to say ‘no’ to some of your ideas,\neven though they seem brilliant at first.',
+    			'You will eventually learn how to say ‘no’ to some of your ideas, \neven though they seem brilliant at first.'+
+    			'\nSometimes you may even have to abandon the whole plan. It hurts'];
 
 	imgscale[lc] = 1;
 	extrabits[lc] = [];
@@ -227,7 +239,7 @@ var setLevels = function()
     imgs[lc] = 'lvl8';
     rot[lc] = true;
     
-    texts[lc] = ['Level 7 text',
+    texts[lc] = ['Level 8 text',
 				 'Example line 2'];
 
 	imgscale[lc] = 0.54;

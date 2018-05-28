@@ -102,7 +102,7 @@ var nextlvlOnClick = function(button)
 //	Create general assets
 var basicScene = function(game, lvl)
 {
-	game.stage.backgroundColor = '#89CFF0';
+	game.stage.backgroundColor = '#eeeeee';
 	
 	//	Music button
 	if (music_isplaying)

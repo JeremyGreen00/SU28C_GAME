@@ -37,9 +37,11 @@ var PPiece = function(pos_x, pos_y, pos)
 	//	Variables for object data
 	this.x = pos_x;
 	this.y = pos_y;
+	this.s = pos;
 	this.width = 0;
 	this.height = 0;
-	this.s = pos;
+	this.Negwidth = this.s[0].x;
+	this.Negheight = this.s[0].y;
 	this.color = randomColor();
 
 	//	Fade animation timer
@@ -72,14 +74,18 @@ var PPiece = function(pos_x, pos_y, pos)
 
 		if(this.s[i].x > this.width) this.width = this.s[i].x;
 		if(this.s[i].y > this.height) this.height = this.s[i].y;
+		if(this.s[i].x < this.Negwidth) this.Negwidth = this.s[i].x;
+		if(this.s[i].y < this.Negheight) this.Negheight = this.s[i].y;
 	}
 
 	balX = Math.round(balX / this.s.length,0);
 	balY = Math.round(balY / this.s.length,0);
 
 	//	Set width and height
-	this.width = (this.width - balX) * gridSize;
-	this.height = (this.height - balY) * gridSize;
+	this.width = (1 + this.width - balX) * gridSize;
+	this.height = (1 + this.height - balY) * gridSize;
+	this.Negwidth = (this.Negwidth - balX) * gridSize;
+	this.Negheight = (this.Negheight - balY) * gridSize;
 
 	//	If x pos are off balance from center, rebalance
 	if (balX > 0 || balX < 0)
@@ -211,11 +217,11 @@ PPiece.prototype.update = function()
 		justPlaced = true;
 	}
 
-	if (game.input.activePointer.msSinceLastClick > 300 &&
-		!game.input.activePointer.rightButton.isDown) this.canRotate = true;
+	//	Rotation reset
+	if (!game.input.activePointer.isDown) this.canRotate = true;
 
-	if((game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR) || 
-		(game.input.activePointer.isDown && game.input.activePointer.msSinceLastClick < 300) ||
+	//	Rotate on input
+	if(((game.input.activePointer.isDown && game.input.activePointer.msSinceLastClick < 300) ||
 		game.input.activePointer.rightButton.isDown) && 
 		(highlight || this.moving)
 		&& this.canRotate) 
@@ -294,17 +300,8 @@ PPiece.prototype.snap = function()
 PPiece.prototype.rotate = function() 
 {
 	//	If difference is less than half way point snap back else snap forward
-	for (var i = 0; i < this.s.length; i++) 
-	{
-		var temp = this.s[i].x;
-		this.s[i].x = - this.s[i].y;
-		this.s[i].y = temp;
-
-		var tempSiz = this.width;
-		this.width = this.height;
-		this.height = tempSiz;
-
-	}
+	this.rotateNonCent();
+	console.log(this.width + ' ' +this.height + ' ' +this.Negwidth + ' ' +this.Negheight + ' ' + this.x + this.y);
 	//	Center piece on mouse
 	this.offsetX = 16;
 	this.offsetY = 16;
@@ -334,12 +331,13 @@ PPiece.prototype.rotateNonCent = function()
 		var temp = this.s[i].x;
 		this.s[i].x = - this.s[i].y;
 		this.s[i].y = temp;
-
-		var tempSiz = this.width;
-		this.width = this.height;
-		this.height = tempSiz;
-
 	}
+
+	var tempSiz = this.width;
+	this.width = this.Negheight;
+	this.Negheight = this.Negwidth;
+	this.Negwidth = this.height;
+	this.height = tempSiz;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -439,21 +437,21 @@ PPiece.prototype.unlock = function()
 
 PPiece.prototype.checkBounds = function() 
 {
-	if(this.x - this.width < 0)
+	if(this.x + this.Negwidth < 0)
 	{
-		this.x = this.width;
+		this.x = -this.Negwidth;
 	}
-	if(this.x + this.width + gridSize > game.width)
+	if(this.x + this.width > game.width)
 	{
-		this.x = game.width - this.width - gridSize;
+		this.x = game.width - this.width;
 	}
-	if(this.y - this.height < 0)
+	if(this.y + this.Negheight < 0)
 	{
-		this.y = this.height;
+		this.y = -this.Negheight;
 	}
-	if(this.y + this.height + gridSize > game.height)
+	if(this.y + this.height > game.height)
 	{
-		this.y = game.height - this.height - gridSize;
+		this.y = game.height - this.height;
 	}
 	this.updatePos();
 }
