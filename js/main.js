@@ -73,6 +73,8 @@ PreloadState.prototype =
 	preload: function() 
 	{
 		// preload assets
+
+		game.stage.smoothed = false;
 		//  Background 
 		game.load.image('bg', 'img/background.jpg');
 
@@ -83,21 +85,24 @@ PreloadState.prototype =
 		game.load.image('shadow', 'img/blackbox.png');
 
 		//	Menu items
-		game.load.image('start', 'img/buttons/temp_start.gif');
-		game.load.image('controls', 'img/buttons/temp_controls.png');
-		game.load.image('lvlsel', 'img/buttons/temp_levelselect.png');
-		game.load.image('continue', 'img/buttons/temp_continue.png');
+		game.load.image('start', 'img/buttons/start.png');
+		game.load.image('credits', 'img/buttons/credit.png');
+		game.load.image('lvlsel', 'img/buttons/level select.png');
+		game.load.image('continue', 'img/buttons/continue.png');
 
 		//	Game buttons
+		//	icon
 		game.load.image('musicOn', 'img/buttons/volume.png');
 		game.load.image('musicOff', 'img/buttons/volume(mute).png');
 		game.load.image('reset', 'img/buttons/reset.png');
 		game.load.image('exit', 'img/buttons/exit.png');
+		//	text
 		game.load.image('menu', 'img/buttons/menu.png');
 		game.load.image('hint', 'img/buttons/hint.png');
-		game.load.image('hintX', 'img/buttons/hint_disabled.png');
+		game.load.image('controls', 'img/buttons/controls.png');
 		game.load.image('hintH', 'img/buttons/hint_highlight.png');
-		game.load.image('next', 'img/buttons/Next_button.png');
+		game.load.image('next', 'img/buttons/next.png');
+		game.load.image('grinder', 'img/buttons/brain.png');
 
 		//	Game sprites
 		game.load.image('lvl1', 'img/sprites/sprite1.png');
@@ -192,13 +197,23 @@ StartState.prototype =
 		setLevels();
 
 		start_button = game.add.button(game.width/2, game.height/2, 'start', startOnClick, this);
+		start_button.anchor.setTo(0.5);
+		start_button.scale.setTo(3);
 
 		if(currlvl!=0)
+		{
 			continue_button = game.add.button(game.width/2, game.height/2 - 64, 'continue', continueOnClick, this);
+			continue_button.anchor.setTo(0.5);
+			continue_button.scale.setTo(3);
+		}
 
-		//controls_button = game.add.button(game.width/2, game.height/2 + 64, 'controls', controlsOnClick, this);
+		credits_button = game.add.button(game.width/2, game.height/2 + 64, 'credits', creditsOnClick, this);
+		credits_button.anchor.setTo(0.5);
+		credits_button.scale.setTo(3);
 
 		lvlsel_button = game.add.button(game.width/2, game.height/2 + 128, 'lvlsel', lvlselOnClick, this);
+		lvlsel_button.anchor.setTo(0.5);
+		lvlsel_button.scale.setTo(3);
 	},
 
 	update: function() 
@@ -219,6 +234,7 @@ PlayState.prototype =
 	create: function() 
 	{
 		// create assets
+		victory = false;
 
 		//  Background
 		game.stage.backgroundColor = '#eeeeee';
@@ -251,21 +267,8 @@ PlayState.prototype =
 			this.level.addp(64 + Math.random() * 600, 32 + Math.random() * 400,extrabits[currlvl][i]);
 		}
 
-		//	Show current level no
-		var l = game.add.text(game.width/2, 4, 'LEVEL: ' + (currlvl + 1), { fontSize: '16px', fill: '#000' });
-		l.font = 'Press Start 2P';
-
 		//  Setups basic buttons and functions
 		basicScene(game,this);
-
-		grindbutton = game.add.button(700, 400, 'iconsAtlas', blockOnClick, this, 
-			'Base_lvl (1)', 'Base_lvl (1)', 'Base_lvl (1)');
-		grindbutton.lvl = this.level;
-		grindbutton.img = game.add.image( 732, 464, 'shadow');
-		grindbutton.img.anchor.setTo(0.5,1);
-		grindbutton.img.scale.setTo(2,2);
-		grindbutton.img.alpha = 0.5;
-		grindbutton.canSpawn = true;
 
 		//game.time.advancedTiming = true;
 		//this.fpstext = game.add.text(16, 16, 'fps = ', { fontSize: '32px', fill: '#fff' });
@@ -355,7 +358,7 @@ LvlSelState.prototype =
 			lvl_button.lvlid = i-1;
 		}
 
-		basicScene(game,this);
+		TopUI(game,this);
 	},
 
 	update: function() 

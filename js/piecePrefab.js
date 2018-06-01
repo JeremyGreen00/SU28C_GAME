@@ -301,7 +301,6 @@ PPiece.prototype.rotate = function()
 {
 	//	If difference is less than half way point snap back else snap forward
 	this.rotateNonCent();
-	console.log(this.width + ' ' +this.height + ' ' +this.Negwidth + ' ' +this.Negheight + ' ');
 	//	Center piece on mouse
 	this.offsetX = 16;
 	this.offsetY = 16;

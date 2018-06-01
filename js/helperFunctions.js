@@ -28,9 +28,9 @@ var makeRandomString = function()
 //	Returns a random color
 var randomColor = function() 
 {
-    var colors = [0x89cff0, 0xFF9999, 0xFFFF99, 0x99FF99, 0xFF99FF];
+    var colors = [0xFF9999, 0x99FF99, 0xFFFF99, 0x9999FF, 0xFF99FF, 0x99FFFF];
 
-    return colors[Math.floor(Math.random() * colors.length)];
+    return colors[Math.round(Math.random() * (colors.length-1))];
 }
 
 //	Toggles music
@@ -77,10 +77,19 @@ var lvlselOnClick = function(button)
 }
 
 //	starts game
+var creditsOnClick = function(button)
+{
+	//game.add.text(16, 16, 'Click and drag pieces to cover the grey space\npress spacebar to rotate',
+	//	 { fontSize: '32px', fill: '#fff' });
+	game.state.start('GameOver');
+}
+
+//	shows controls
 var controlsOnClick = function(button)
 {
-	game.add.text(16, 16, 'Click and drag pieces to cover the grey space\npress spacebar to rotate',
-		 { fontSize: '32px', fill: '#fff' });
+	if (button.disptxt.alpha == 0) button.disptxt.alpha = 1;
+	else button.disptxt.alpha = 0;
+	game.world.bringToTop(button.disptxt);
 }
 
 //	Return to menu
@@ -102,7 +111,7 @@ var nextlvlOnClick = function(button)
 //	Creates new block
 var blockOnClick = function(button)
 {
-	if (button.canSpawn) 
+	if (button.canSpawn && victory == false) 
 	{
 		button.lvl.addp(712 + Math.random()*8, 344 + Math.random()*8, [{x:0,y:0}]);
 
@@ -130,10 +139,9 @@ var blockOnClick = function(button)
 	}
 }
 
-//	Create general assets
-var basicScene = function(game, lvl)
+//	Generate menu ui buttons
+var TopUI = function(game, lvl)
 {
-	
 	//	Music button
 	if (music_isplaying)
 	{
@@ -154,20 +162,47 @@ var basicScene = function(game, lvl)
 	menu_button = game.add.button(game.width - 27*4 - 4, 4, 'menu', menuOnClick, this);
 	menu_button.scale.setTo(4);
 	menu_button.smoothed = false;
+}
 
+//	Create general assets
+var basicScene = function(game, lvl)
+{
+	TopUI(game, lvl);
+
+	//	Show current level no
+	var l = game.add.text(game.width/2 - 100, 4, 'LEVEL: ' + (currlvl + 1), { fontSize: '16px', fill: '#000' });
+	l.font = 'Press Start 2P';
+	l.anchor.setTo(0.5,0);
+
+	//  Hint button for helping with puzzle
 	hint_button = game.add.button(game.width - 209, 4, 'hint', 
-				function(button) 
-			{ 
-				if (button.maxH > 0)  {
-					button.currlvl.hint();
-					button.maxH--;
-					if (button.maxH <= 0) button.loadTexture( 'hintX');
-				}
-			}, this);
+		function(button) 
+		{ 
+			button.currlvl.hint(hintbits[currlvl]);
+		}, 
+		this);
 	hint_button.scale.setTo(4);
-	hint_button.smoothed = false;
 	hint_button.currlvl = lvl.level;
-	hint_button.maxH = 3;
+
+	//  controls button to display controls
+	control_button = game.add.button(game.width - 400, 4, 'controls', controlsOnClick, this);
+	control_button.scale.setTo(4);
+	control_button.disptxt = game.add.text(game.width/2, 40, 
+		'Click and drag pieces\nCover the grid\nDouble click to rotate',
+		 { font: 'Press Start 2P', fontSize: '16px', fill: '#000', align: 'center'});
+	control_button.disptxt.alpha = 0;
+	control_button.disptxt.anchor.setTo(0.5,0);
+
+	//	The button for spawning new pieces
+	grindbutton = game.add.button(game.width - 64, game.height - 128, 'grinder', blockOnClick, this);
+	grindbutton.scale.setTo(2.5);
+	grindbutton.anchor.setTo(0.5,1);
+	grindbutton.lvl = lvl.level;
+	grindbutton.img = game.add.image( grindbutton.x, grindbutton.y, 'shadow');
+	grindbutton.img.anchor.setTo(0.5,1);
+	grindbutton.img.scale.setTo(2,2);
+	grindbutton.img.alpha = 0.5;
+	grindbutton.canSpawn = true;
 
 	lvl.levelwon = false;
 }
@@ -175,16 +210,17 @@ var basicScene = function(game, lvl)
 //	Run the scene
 var basicUpdate = function(game,lvl)
 {
-	if (victory) 
+	if (victory && lvl.levelwon == false) 
 	{
 		lvl.Narritive.set('You win! Click for next level');
 		//lvl.Narritive.stop();
 		win_sound.play('',0,0.5,false);
-		victory = false;
 		lvl.levelwon = true;
 		lvl.level.hide();
 
-		game.add.button(32, game.width/2, 'next', nextlvlOnClick, this);
+		var b = game.add.button(game.width - 64, game.height/2, 'next', nextlvlOnClick, this);
+		b.anchor.setTo(0.5);
+		b.scale.setTo(3);
 	}
 	else if (lvl.levelwon == false)
 	{

@@ -9,6 +9,7 @@ var msgs = [totalLvls];
 var pos = [totalLvls];
 var texts = [totalLvls];
 var imgscale = [totalLvls];
+var hintbits = [totalLvls];
 
 var extrabits = [totalLvls];
 
@@ -18,26 +19,32 @@ var setLevels = function()
 	var lc = 0;
     
 	// Level 1 
+	//					Puzzle location			|	Image offseet from puzzle
 	pos[lc] = {x: game.width/2, y: game.height/2, imgoffSetX: 0, imgoffSetY: 0};
+	//	Puzzle points/bits
     puzzles[lc] =
 	[{x:0,y:0},{x:0,y:1},{x:0,y:2},{x:0,y:3},
      {x:1,y:0},{x:2,y:0},{x:1,y:1},{x:2,y:1},
      {x:1,y:2},{x:2,y:2},{x:1,y:3},{x:2,y:3}];
-
+     //	Size of each piece
     pieces[lc] = [4,4,4];
-
+    //	Level sprite to load
 	imgs[lc] = 'lvl1';
+	//	Scramble rotate pieces?
 	rot[lc] = true;
-
+	//	Narrative text
 	texts[lc] = ['So let’s begin. Click and drag to fill the space, right click to rotate',
 				 'So let’s begin. Click and drag to fill the space, right click to rotate' +
 				 '\nWhat does game development mean to you?',
 				 'So let’s begin. Click and drag to fill the space, right click to rotate' +
 				 '\nWhat does game development mean to you?' + 
 				 '\nI think it’s just like playing a puzzle game where you put different blocks into the frame.'];
-
+	//	Sprite scale if off 
 	imgscale[lc] = 1;
+	//	Extra bits to generate (example at bottom)
 	extrabits[lc] = [];
+	//	Index of pieces to highlight for hint
+	hintbits[lc] = [0,1];
 
 	// Level 2
     ++lc;
@@ -65,6 +72,7 @@ var setLevels = function()
 
 	imgscale[lc] = 0.5;
 	extrabits[lc] = [];
+	hintbits[lc] = [0,1];
 
 	// Level 3
     ++lc;
@@ -91,6 +99,7 @@ var setLevels = function()
 
 	imgscale[lc] = 0.8;
 	extrabits[lc] = [];
+	hintbits[lc] = [0,1];
     
     // Level 4
     ++lc;
@@ -122,6 +131,7 @@ var setLevels = function()
 
 	imgscale[lc] = 0.45;
 	extrabits[lc] = [];
+	hintbits[lc] = [2,3,4];
 
 	// Level 5
     ++lc;
@@ -158,6 +168,7 @@ var setLevels = function()
 	imgscale[lc] = 0.54;
 	extrabits[lc] = 
 		[];
+	hintbits[lc] = [0,1];
 
 	// Level 6
     ++lc;
@@ -186,6 +197,7 @@ var setLevels = function()
 
 	imgscale[lc] = 0.8;
 	extrabits[lc] = [];
+	hintbits[lc] = [0,1];
 
     // Level 7
     ++lc;
@@ -213,6 +225,7 @@ var setLevels = function()
 
 	imgscale[lc] = 1;
 	extrabits[lc] = [];
+	hintbits[lc] = [0,1];
     
     // Level 8
     ++lc;
@@ -244,6 +257,7 @@ var setLevels = function()
 
 	imgscale[lc] = 0.54;
 	extrabits[lc] = [];
+	hintbits[lc] = [0,1];
     
     
     // Level 9
@@ -285,6 +299,7 @@ var setLevels = function()
 
 	imgscale[lc] = 1;
 	extrabits[lc] = [];
+	hintbits[lc] = [0,1];
 
     /*
     // Level 10
@@ -303,6 +318,7 @@ var setLevels = function()
 
 	imgscale[lc] = 1.1;
 	extrabits[lc] = [];
+	hintbits[lc] = [0,1];
 
     // Level 11
     ++lc;
@@ -320,6 +336,7 @@ var setLevels = function()
 
 	imgscale[lc] = 0.66;
 	extrabits[lc] = [];
+	hintbits[lc] = [0,1];
 
     // Level 12
     ++lc;
@@ -337,6 +354,7 @@ var setLevels = function()
 
 	imgscale[lc] = 0.5;
 	extrabits[lc] = [];
+	hintbits[lc] = [0,1];
     
     // Level 13
     ++lc;
@@ -354,6 +372,7 @@ var setLevels = function()
 
 	imgscale[lc] = 0.5;
 	extrabits[lc] = [];
+	hintbits[lc] = [0,1];
     
     // Level 14
     ++lc;
@@ -371,6 +390,7 @@ var setLevels = function()
 
 	imgscale[lc] = 0.5;
 	extrabits[lc] = [];
+	hintbits[lc] = [0,1];
     
     // Level 15
     ++lc;
@@ -388,6 +408,7 @@ var setLevels = function()
 
 	imgscale[lc] = 0.66;
 	extrabits[lc] = [];
+	hintbits[lc] = [0,1];
     
     // Level 16
     ++lc;
@@ -405,6 +426,7 @@ var setLevels = function()
 
 	imgscale[lc] = 0.66;
 	extrabits[lc] = [];
+	hintbits[lc] = [0,1];
     
     // Level 17
     ++lc;
@@ -422,6 +444,7 @@ var setLevels = function()
 
 	imgscale[lc] = 0.4;
 	extrabits[lc] = [];
+	hintbits[lc] = [0,1];
     
     // Level 18
     ++lc;
@@ -439,6 +462,7 @@ var setLevels = function()
 
 	imgscale[lc] = 0.4;
 	extrabits[lc] = [];
+	hintbits[lc] = [0,1];
     */
     
 	/*
@@ -463,5 +487,6 @@ var setLevels = function()
 		[[{x:3,y:0},{x:3,y:1},{x:3,y:2},{x:2,y:1},{x:2,y:2},{x:1,y:2}],
 		 [{x:1,y:3},{x:2,y:3},{x:3,y:3},{x:1,y:4},{x:2,y:4},{x:3,y:4}],
 		 [{x:2,y:5},{x:2,y:6},{x:3,y:6},{x:4,y:6}]];
+	hintbits[lc] = [0,1];
 	*/
 }

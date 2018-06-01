@@ -29,6 +29,8 @@ var Puzzle = function(game, pos_x, pos_y, pieceSizes, shape, randomRotation)
 
 	this.fade = false;
 
+	this.isHinting = false;
+
 	//	Used for hint function
 	this.chunckSizes = pieceSizes;
 
@@ -276,21 +278,45 @@ Puzzle.prototype.show = function()
 // 	Shows a hint for the puzzle
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Puzzle.prototype.hint = function() 
+Puzzle.prototype.hint = function(chunckIndex) 
 {
-	var i = Math.floor(Math.random() * this.chunckSizes.length)
-	var bitIn = 0;
 
-	//	grab index range of shells that make up chunck
-	for (var j = 0; j < i; j++) 
+	if (chunckIndex != null)
 	{
-		bitIn += this.chunckSizes[j];
+		
+		var totalbits = chunckIndex.length;
+
+		for (var bitstoshow = 0; bitstoshow < totalbits; bitstoshow++) 
+		{	
+		
+			var i = chunckIndex[bitstoshow];
+
+			var bitIn = 0;
+			//	grab index range of shells that make up chunck
+			for (var j = 0; j < i; j++) 
+			{
+				bitIn += this.chunckSizes[j];
+			}
+
+			//	color those shells the same as the associative chunck
+			for (var j = bitIn; j < bitIn +  this.chunckSizes[i]; j++) 
+			{
+				if (this.isHinting == false) 
+				{
+					this.shells[j].tint = this.CHUNKS[i].color;
+				}
+				else
+				{
+					this.shells[j].tint = 0xFFFFFF;
+				}
+			}
+		}
+
+		this.isHinting = !this.isHinting;
 	}
-
-	//	color those shells the same as the associative chunck
-	for (var j = bitIn; j < bitIn +  this.chunckSizes[i]; j++) 
+	else
 	{
-		this.shells[j].tint = this.CHUNKS[i].color;
+		//var i = Math.floor(Math.random() * this.chunckSizes.length)
 	}
 		
 }
