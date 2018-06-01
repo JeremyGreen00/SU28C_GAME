@@ -28,7 +28,7 @@ WebFontConfig =
 
     //  The Google Fonts we want to load (specify as many as you like in the array)
     google: {
-      families: ['East Sea Dokdo']
+      families: ['East Sea Dokdo','Press Start 2P']
     }
 };
 
@@ -73,6 +73,9 @@ PreloadState.prototype =
 	preload: function() 
 	{
 		// preload assets
+		//  Background 
+		game.load.image('bg', 'img/background.jpg');
+
 		//	Game pieces
 		game.load.image('piece', 'img/pieceGrey.png');
 		game.load.image('highlight', 'img/selectionGrey.png');
@@ -171,7 +174,8 @@ StartState.prototype =
 	create: function() 
 	{
 		// create assets
-		game.stage.backgroundColor = '#eeeeee';
+		//	Background
+		game.add.image(0,0,'bg');
 
 		//	Music button
 		if (music_isplaying)
@@ -192,7 +196,7 @@ StartState.prototype =
 		if(currlvl!=0)
 			continue_button = game.add.button(game.width/2, game.height/2 - 64, 'continue', continueOnClick, this);
 
-		controls_button = game.add.button(game.width/2, game.height/2 + 64, 'controls', controlsOnClick, this);
+		//controls_button = game.add.button(game.width/2, game.height/2 + 64, 'controls', controlsOnClick, this);
 
 		lvlsel_button = game.add.button(game.width/2, game.height/2 + 128, 'lvlsel', lvlselOnClick, this);
 	},
@@ -216,6 +220,11 @@ PlayState.prototype =
 	{
 		// create assets
 
+		//  Background
+		game.stage.backgroundColor = '#eeeeee';
+		game.add.image(0,0,'bg');
+
+		//	Load a new puzzle into the level
 		this.level = new Puzzle(game, 
 			pos[currlvl].x, 
 			pos[currlvl].y, 
@@ -223,6 +232,7 @@ PlayState.prototype =
 			puzzles[currlvl],
 			true);
 
+		//	Load a new narration and subtitles into the level
 		this.Narritive = new Subbox(game,
 			texts[currlvl]);
 
@@ -230,7 +240,9 @@ PlayState.prototype =
 		this.lvlsprte = game.add.image( this.level.x + pos[currlvl].imgoffSetX, 
 										this.level.y + pos[currlvl].imgoffSetY,
 										imgs[currlvl]);
+		//	Make image invisible at start
 		this.lvlsprte.alpha = 0;
+		//	Scale the image so it's the right size
 		this.lvlsprte.scale.setTo(imgscale[currlvl]);
 
 		//	Add extra bits if necessary
@@ -239,7 +251,22 @@ PlayState.prototype =
 			this.level.addp(64 + Math.random() * 600, 32 + Math.random() * 400,extrabits[currlvl][i]);
 		}
 
+		//	Show current level no
+		var l = game.add.text(game.width/2, 4, 'LEVEL: ' + (currlvl + 1), { fontSize: '16px', fill: '#000' });
+		l.font = 'Press Start 2P';
+
+		//  Setups basic buttons and functions
 		basicScene(game,this);
+
+		grindbutton = game.add.button(700, 400, 'iconsAtlas', blockOnClick, this, 
+			'Base_lvl (1)', 'Base_lvl (1)', 'Base_lvl (1)');
+		grindbutton.lvl = this.level;
+		grindbutton.img = game.add.image( 732, 464, 'shadow');
+		grindbutton.img.anchor.setTo(0.5,1);
+		grindbutton.img.scale.setTo(2,2);
+		grindbutton.img.alpha = 0.5;
+		grindbutton.canSpawn = true;
+
 		//game.time.advancedTiming = true;
 		//this.fpstext = game.add.text(16, 16, 'fps = ', { fontSize: '32px', fill: '#fff' });
 	},
@@ -269,6 +296,11 @@ GameOver.prototype =
 	create: function() 
 	{
 		// create assets
+
+		//  Background
+		game.stage.backgroundColor = '#eeeeee';
+		game.add.image(0,0,'bg');
+
 		this.wintext = game.add.text(16, 48, 
 			'Congradulations, you have beaten the demo\nClick to start again', { fontSize: '32px', fill: '#fff' });
 		currlvl = 0;
@@ -300,6 +332,12 @@ LvlSelState.prototype =
 
 	create: function() 
 	{
+
+		//  Background
+		game.stage.backgroundColor = '#eeeeee';
+		game.add.image(0,0,'bg');
+
+		//	Buttons
 		for (var i = 1; i <= totalLvls; i++) 
 		{
 			var bx = -64-16 + (i * 128) % (game.width ) + Math.floor( (i * 128) / (game.width ) ) * 32;
@@ -307,11 +345,12 @@ LvlSelState.prototype =
 
 			lvl_button = game.add.button(bx, by, 'iconsAtlas', 
 				function(button) 
-			{ 
-				currlvl = button.lvlid; 
-				//console.log(currlvl);
-				game.state.start('Play'); 
-			}, this, 'Base_lvl ('+i+')', 'Base_lvl ('+i+')', 'Base_lvl ('+i+')');
+				{ 
+					currlvl = button.lvlid; 
+					//console.log(currlvl);
+					game.state.start('Play'); 
+				}, 
+			this, 'Base_lvl ('+i+')', 'Base_lvl ('+i+')', 'Base_lvl ('+i+')');
 
 			lvl_button.lvlid = i-1;
 		}

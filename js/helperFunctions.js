@@ -99,10 +99,40 @@ var nextlvlOnClick = function(button)
 		game.state.start('GameOver');	
 }
 
+//	Creates new block
+var blockOnClick = function(button)
+{
+	if (button.canSpawn) 
+	{
+		button.lvl.addp(712 + Math.random()*8, 344 + Math.random()*8, [{x:0,y:0}]);
+
+		button.canSpawn = false;
+
+		// 	Set to true so timer auto destroys once done
+		var timer = game.time.create(true);
+
+		button.img.scale.y = 0;
+
+		//	Add a timed event
+		for (var i = 0; i < 200; i++) 
+		{
+			timer.add( i * 10, 
+				function(timevar)
+				{
+					button.img.scale.y += 0.01;
+					if(button.img.scale.y >= 2) button.canSpawn = true;
+				},
+				this);
+		}
+
+		//	Start the timer. Very important
+		timer.start();
+	}
+}
+
 //	Create general assets
 var basicScene = function(game, lvl)
 {
-	game.stage.backgroundColor = '#eeeeee';
 	
 	//	Music button
 	if (music_isplaying)

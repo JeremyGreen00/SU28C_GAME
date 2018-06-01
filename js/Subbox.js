@@ -29,7 +29,7 @@ var Subbox = function(game, dialogs)
 
 	//	Contains text to display
 	this.currtxt = game.add.text(this.x + 16, this.y + 16, '', { fontSize: '16px', fill: '#fff' });
-	this.currtxt.font = 'East Sea Dokdo';
+	this.currtxt.font = 'Helvetica';
 
 	// 	Set to true so timer auto destroys once done
 	this.timer = game.time.create(true);

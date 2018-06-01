@@ -301,7 +301,7 @@ PPiece.prototype.rotate = function()
 {
 	//	If difference is less than half way point snap back else snap forward
 	this.rotateNonCent();
-	console.log(this.width + ' ' +this.height + ' ' +this.Negwidth + ' ' +this.Negheight + ' ' + this.x + this.y);
+	console.log(this.width + ' ' +this.height + ' ' +this.Negwidth + ' ' +this.Negheight + ' ');
 	//	Center piece on mouse
 	this.offsetX = 16;
 	this.offsetY = 16;
@@ -334,9 +334,9 @@ PPiece.prototype.rotateNonCent = function()
 	}
 
 	var tempSiz = this.width;
-	this.width = this.Negheight;
+	this.width = -this.Negheight + 32;
 	this.Negheight = this.Negwidth;
-	this.Negwidth = this.height;
+	this.Negwidth = -this.height + 32;
 	this.height = tempSiz;
 }
 
