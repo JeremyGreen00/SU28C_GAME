@@ -48,6 +48,7 @@ var PPiece = function(pos_x, pos_y, pos)
 	// 	Set to true so timer auto destroys once done
 	this.fadeTimer = game.time.create(true);
 
+	//	set the timer to loop
 	this.fadeTimer.loop(10, this.fade, this);
 
 	//	Images for blocks itself
@@ -134,7 +135,7 @@ PPiece.prototype.constructor = PPiece;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	PUZZLE PIECE PREFAB
-// 	override Phaser.Sprite update
+// 	update piece activity
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 PPiece.prototype.update = function() 

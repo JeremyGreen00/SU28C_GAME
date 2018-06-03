@@ -7,16 +7,23 @@
 // init game
 var game = new Phaser.Game(800, 600, Phaser.AUTO);
 
+var justLoaded = false;
+
 //	current level player is up to
 var currlvl = 0;
+var unlockedlvl = 1;
 
 // sound variables
 var click_sound;
+var swish_sound;
 var win_sound;
 var drop_sound;
 var piano_song;
 
 var music_isplaying = false;
+
+//	Get the style from the css file
+var style;
 
 //  The Google WebFont Loader.
 WebFontConfig = 
@@ -53,6 +60,9 @@ BootState.prototype =
 		// preload assets
 		game.load.path = 'assets/';
 		///load boot image
+
+		//	Init from style.css
+		style = getComputedStyle(document.body);
 	},
 
 	create: function() 
@@ -73,10 +83,12 @@ PreloadState.prototype =
 	preload: function() 
 	{
 		// preload assets
+		game.stage.backgroundColor = style.getPropertyValue('background-color');
 
 		game.stage.smoothed = false;
 		//  Background 
 		game.load.image('bg', 'img/background.jpg');
+		game.load.image('blankTile', 'img/whiteBox.png')
 
 		//	Game pieces
 		game.load.image('piece', 'img/pieceGrey.png');
@@ -89,6 +101,13 @@ PreloadState.prototype =
 		game.load.image('credits', 'img/buttons/credit.png');
 		game.load.image('lvlsel', 'img/buttons/level select.png');
 		game.load.image('continue', 'img/buttons/continue.png');
+		game.load.image('title', 'img/main_menu.png');
+
+		//	Textbox items
+		game.load.image('play', 'img/buttons/play.png');
+		game.load.image('pause', 'img/buttons/pause.png');
+		game.load.image('play_hide', 'img/buttons/play_hide.png');
+		game.load.image('play_show', 'img/buttons/play_show.png');
 
 		//	Game buttons
 		//	icon
@@ -99,10 +118,11 @@ PreloadState.prototype =
 		//	text
 		game.load.image('menu', 'img/buttons/menu.png');
 		game.load.image('hint', 'img/buttons/hint.png');
-		game.load.image('controls', 'img/buttons/controls.png');
+		game.load.image('controls', 'img/buttons/help.png');
 		game.load.image('hintH', 'img/buttons/hint_highlight.png');
 		game.load.image('next', 'img/buttons/next.png');
 		game.load.image('grinder', 'img/buttons/brain.png');
+		game.load.image('grinderfill', 'img/buttons/brain_fill.png');
 
 		//	Game sprites
 		game.load.image('lvl1', 'img/sprites/sprite1.png');
@@ -128,6 +148,7 @@ PreloadState.prototype =
 		game.load.atlas('iconsAtlas','img/lvl_icons/lvl_icons.png','img/lvl_icons/lvl_icons.json');
 
 		//	Sound assets
+		game.load.audio('swish', 'audio/se/Swish.ogg');
 		game.load.audio('click', 'audio/se/click.wav');
 		game.load.audio('drop', 'audio/se/dropdown.ogg');
 		game.load.audio('win', 'audio/se/win.wav');
@@ -142,6 +163,7 @@ PreloadState.prototype =
 	create: function() 
 	{
 		// create assets
+		swish_sound = game.add.audio('swish');
 		click_sound = game.add.audio('click');
 		win_sound = game.add.audio('win');
 		drop_sound = game.add.audio('drop');
@@ -181,39 +203,40 @@ StartState.prototype =
 		// create assets
 		//	Background
 		game.add.image(0,0,'bg');
-
-		//	Music button
-		if (music_isplaying)
-		{
-			music_button = game.add.button(4, 4, 'musicOn', musicOnClick, this);
-		}
-		else 
-		{
-			music_button = game.add.button(4, 4, 'musicOff', musicOnClick, this);
-		}
-		music_button.scale.setTo(0.15);
+		game.add.image(0,0,'title');
 
 		//	Set level data
 		setLevels();
 
-		start_button = game.add.button(game.width/2, game.height/2, 'start', startOnClick, this);
+		start_button = game.add.button(game.width/2, game.height/2 + 48 * 2, 'start', startOnClick, this);
 		start_button.anchor.setTo(0.5);
 		start_button.scale.setTo(3);
+		start_button.tint = randomColor();
 
 		if(currlvl!=0)
 		{
-			continue_button = game.add.button(game.width/2, game.height/2 - 64, 'continue', continueOnClick, this);
+			continue_button = game.add.button(game.width/2, game.height/2 + 48, 'continue', continueOnClick, this);
 			continue_button.anchor.setTo(0.5);
 			continue_button.scale.setTo(3);
+			continue_button.tint = randomColor();
 		}
 
-		credits_button = game.add.button(game.width/2, game.height/2 + 64, 'credits', creditsOnClick, this);
+		credits_button = game.add.button(game.width/2, game.height/2 + 48 * 3, 'credits', creditsOnClick, this);
 		credits_button.anchor.setTo(0.5);
 		credits_button.scale.setTo(3);
+		credits_button.tint = randomColor();
 
-		lvlsel_button = game.add.button(game.width/2, game.height/2 + 128, 'lvlsel', lvlselOnClick, this);
+		lvlsel_button = game.add.button(game.width/2, game.height/2 + 48 * 4, 'lvlsel', lvlselOnClick, this);
 		lvlsel_button.anchor.setTo(0.5);
 		lvlsel_button.scale.setTo(3);
+		lvlsel_button.tint = randomColor();
+
+		TopUI(game);
+
+		if (justLoaded == false) fadein(100);
+		else fadein(20);
+
+		justLoaded = true;
 	},
 
 	update: function() 
@@ -272,6 +295,8 @@ PlayState.prototype =
 
 		//game.time.advancedTiming = true;
 		//this.fpstext = game.add.text(16, 16, 'fps = ', { fontSize: '32px', fill: '#fff' });
+
+		fadein(20);
 	},
 
 	update: function() 
@@ -307,6 +332,9 @@ GameOver.prototype =
 		this.wintext = game.add.text(16, 48, 
 			'Congradulations, you have beaten the demo\nClick to start again', { fontSize: '32px', fill: '#fff' });
 		currlvl = 0;
+
+		TopUI(game);
+		fadein(50);
 	},
 
 	update: function() 
@@ -314,7 +342,7 @@ GameOver.prototype =
 		// run game loop
 		if(game.input.activePointer.isDown)
 		{
-			game.state.start('Start');
+			fadeOut('Start',20);
 		}
 
 	}
@@ -346,19 +374,32 @@ LvlSelState.prototype =
 			var bx = -64-16 + (i * 128) % (game.width ) + Math.floor( (i * 128) / (game.width ) ) * 32;
 			var by = 128 + Math.floor( (i * 128) / (game.width ) ) * 128;
 
-			lvl_button = game.add.button(bx, by, 'iconsAtlas', 
-				function(button) 
-				{ 
-					currlvl = button.lvlid; 
-					//console.log(currlvl);
-					game.state.start('Play'); 
-				}, 
-			this, 'Base_lvl ('+i+')', 'Base_lvl ('+i+')', 'Base_lvl ('+i+')');
+			if (i <= unlockedlvl)
+			{
+				lvl_button = game.add.button(bx, by, 'iconsAtlas', 
+					function(button) 
+					{ 
+						currlvl = button.lvlid; 
+						//console.log(currlvl);
+						fadeOut('Play',20); 
+					}, 
+				this, 'lvl_icon ('+i+')', 'lvl_icon ('+i+')', 'lvl_icon ('+i+')');
 
-			lvl_button.lvlid = i-1;
+				lvl_button.lvlid = i-1;
+				lvl_button.tint = randomColor();
+				lvl_button.scale.setTo(4);
+			}
+			else
+			{
+				lvl_button = game.add.image(bx,by, 'iconsAtlas', 'lvl_icon lock');
+				lvl_button.tint = randomColor();
+				lvl_button.scale.setTo(4);
+			}
 		}
 
-		TopUI(game,this);
+		TopUI(game);
+
+		fadein(20);
 	},
 
 	update: function() 

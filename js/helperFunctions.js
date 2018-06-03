@@ -54,26 +54,27 @@ var musicOnClick = function(button)
 var resetOnClick = function(button)
 {
 	setLevels();
-	game.state.restart();
+	fadeOut(game.state.getCurrentState().key, 20);
+	//game.state.restart();
 }
 
 //	starts game
 var startOnClick = function(button)
 {
 	currlvl = 0;
-	game.state.start('Play');
+	fadeOut('Play', 20);
 }
 
 //	continues from last left off game
 var continueOnClick = function(button)
 {
-	game.state.start('Play');
+	fadeOut('Play', 20);
 }
 
 //	continues from last left off game
 var lvlselOnClick = function(button)
 {
-	game.state.start('lvlselect');
+	fadeOut('lvlselect', 20);
 }
 
 //	starts game
@@ -81,7 +82,7 @@ var creditsOnClick = function(button)
 {
 	//game.add.text(16, 16, 'Click and drag pieces to cover the grey space\npress spacebar to rotate',
 	//	 { fontSize: '32px', fill: '#fff' });
-	game.state.start('GameOver');
+	fadeOut('GameOver', 50);
 }
 
 //	shows controls
@@ -95,7 +96,7 @@ var controlsOnClick = function(button)
 //	Return to menu
 var menuOnClick = function(button)
 {
-	game.state.start('Start');
+	fadeOut('Start', 20);
 }
 
 //	Loads the next state
@@ -103,9 +104,9 @@ var nextlvlOnClick = function(button)
 {
 	currlvl++;
 	if (currlvl<totalLvls) 
-		game.state.start('Play');
+		fadeOut('Play',20);
 	else
-		game.state.start('GameOver');	
+		fadeOut('GameOver',50);	
 }
 
 //	Creates new block
@@ -123,13 +124,13 @@ var blockOnClick = function(button)
 		button.img.scale.y = 0;
 
 		//	Add a timed event
-		for (var i = 0; i < 200; i++) 
+		for (var i = 0; i < 251; i++) 
 		{
 			timer.add( i * 10, 
 				function(timevar)
 				{
 					button.img.scale.y += 0.01;
-					if(button.img.scale.y >= 2) button.canSpawn = true;
+					if(button.img.scale.y >= 2.5) button.canSpawn = true;
 				},
 				this);
 		}
@@ -140,42 +141,60 @@ var blockOnClick = function(button)
 }
 
 //	Generate menu ui buttons
-var TopUI = function(game, lvl)
+var TopUI = function(game)
 {
+	//	Description text
+	desc_text = game.add.text(4, 40, '', { font: 'Press Start 2P', fontSize: '16px', fill: '#000'});
+
+	//	Menu button
+	menu_button = game.add.button(4, 4, 'menu', menuOnClick, this);
+	menu_button.scale.setTo(2);
+	menu_button.onInputOver.add(function() {desc_text.text = 'menu';}, this);
+	menu_button.onInputOut.add(function() {desc_text.text = '';}, this);
+
 	//	Music button
 	if (music_isplaying)
 	{
-		music_button = game.add.button(4, 4, 'musicOn', musicOnClick, this);
+		music_button = game.add.button(4*2 + 32, 4, 'musicOn', musicOnClick, this);
 	}
 	else 
 	{
-		music_button = game.add.button(4, 4, 'musicOff', musicOnClick, this);
+		music_button = game.add.button(4*2 + 32, 4, 'musicOff', musicOnClick, this);
 	}
-	music_button.scale.setTo(0.15);
+	music_button.scale.setTo(2);
+	music_button.onInputOver.add(function() {desc_text.text = 'music';}, this);
+	music_button.onInputOut.add(function() {desc_text.text = '';}, this);
 
 	//	Reset button
-	reset_button = game.add.button(4 + Math.floor(175*0.2), 4, 'reset', resetOnClick, this);
-	reset_button.scale.setTo(0.3);
-	reset_button.smoothed = false;
+	reset_button = game.add.button(4*3 + 32*2, 4, 'reset', resetOnClick, this);
+	reset_button.scale.setTo(2);
+	reset_button.onInputOver.add(function() {desc_text.text = 'reset';}, this);
+	reset_button.onInputOut.add(function() {desc_text.text = '';}, this);
 
-	//	Menu button
-	menu_button = game.add.button(game.width - 27*4 - 4, 4, 'menu', menuOnClick, this);
-	menu_button.scale.setTo(4);
-	menu_button.smoothed = false;
+	//  controls button to display controls
+	control_button = game.add.button(4*4 + 32*3, 4, 'controls', controlsOnClick, this);
+	control_button.scale.setTo(2);
+	control_button.disptxt = game.add.text(game.width/2, 40, 
+		'Click and drag pieces\nCover the grid\nDouble click to rotate',
+		 { font: 'Press Start 2P', fontSize: '16px', fill: '#000', align: 'center'});
+	control_button.disptxt.alpha = 0;
+	control_button.disptxt.anchor.setTo(0.5,0);
+	control_button.onInputOver.add(function() {desc_text.text = 'controls';}, this);
+	control_button.onInputOut.add(function() {desc_text.text = '';}, this);
 }
 
 //	Create general assets
 var basicScene = function(game, lvl)
 {
-	TopUI(game, lvl);
+	TopUI(game);
 
 	//	Show current level no
-	var l = game.add.text(game.width/2 - 100, 4, 'LEVEL: ' + (currlvl + 1), { fontSize: '16px', fill: '#000' });
+	var l = game.add.text(game.width/2, 4, 'LEVEL: ' + (currlvl + 1), { fontSize: '16px', fill: '#000' });
 	l.font = 'Press Start 2P';
 	l.anchor.setTo(0.5,0);
 
 	//  Hint button for helping with puzzle
-	hint_button = game.add.button(game.width - 209, 4, 'hint', 
+	hint_button = game.add.button(game.width - 23*4 - 4, 4, 'hint', 
 		function(button) 
 		{ 
 			button.currlvl.hint(hintbits[currlvl]);
@@ -184,23 +203,14 @@ var basicScene = function(game, lvl)
 	hint_button.scale.setTo(4);
 	hint_button.currlvl = lvl.level;
 
-	//  controls button to display controls
-	control_button = game.add.button(game.width - 400, 4, 'controls', controlsOnClick, this);
-	control_button.scale.setTo(4);
-	control_button.disptxt = game.add.text(game.width/2, 40, 
-		'Click and drag pieces\nCover the grid\nDouble click to rotate',
-		 { font: 'Press Start 2P', fontSize: '16px', fill: '#000', align: 'center'});
-	control_button.disptxt.alpha = 0;
-	control_button.disptxt.anchor.setTo(0.5,0);
-
 	//	The button for spawning new pieces
 	grindbutton = game.add.button(game.width - 64, game.height - 128, 'grinder', blockOnClick, this);
 	grindbutton.scale.setTo(2.5);
 	grindbutton.anchor.setTo(0.5,1);
 	grindbutton.lvl = lvl.level;
-	grindbutton.img = game.add.image( grindbutton.x, grindbutton.y, 'shadow');
+	grindbutton.img = game.add.image( grindbutton.x, grindbutton.y, 'grinderfill');
 	grindbutton.img.anchor.setTo(0.5,1);
-	grindbutton.img.scale.setTo(2,2);
+	grindbutton.img.scale.setTo(2.5);
 	grindbutton.img.alpha = 0.5;
 	grindbutton.canSpawn = true;
 
@@ -213,7 +223,11 @@ var basicUpdate = function(game,lvl)
 	if (victory && lvl.levelwon == false) 
 	{
 		lvl.Narritive.set('You win! Click for next level');
-		//lvl.Narritive.stop();
+
+		//	If new level, unlock
+		if (unlockedlvl - 1 <= currlvl + 1) unlockedlvl = currlvl + 2;
+
+		lvl.Narritive.stop();
 		win_sound.play('',0,0.5,false);
 		lvl.levelwon = true;
 		lvl.level.hide();

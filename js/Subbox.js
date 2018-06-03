@@ -10,6 +10,7 @@
 //	contains all necessities for narritive
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+var SubboxHidden = false;
 //	Prefabs
 //	Subbox Prefab constructor function
 var Subbox = function(game, dialogs)
@@ -43,7 +44,17 @@ var Subbox = function(game, dialogs)
 	//	Start the timer. Very important
 	this.timer.start();
 
+	//	Buttons
+	//	hide button
+	this.hide_button = game.add.button(this.x, this.y, 'play_hide', this.hide, this);
+	this.hide_button.scale.setTo(2);
+	this.hide_button.anchor.setTo(0,1);
 
+	if (SubboxHidden) 
+	{
+		SubboxHidden = false;
+		this.hide(this.hide_button);
+	}
 
 	//	Signal if done
 	this.done = false;
@@ -68,4 +79,35 @@ Subbox.prototype.stop = function()
 {
 	
 	this.timer.stop();
+}
+
+Subbox.prototype.hide = function(button) 
+{
+	if (SubboxHidden == false)
+	{
+		this.timer.pause();
+
+		this.box.y = this.y + 32 * 3;
+		this.box.scale.set(23,0.1);
+
+		this.currtxt.alpha = 0;
+
+		this.hide_button.y = this.y + 32 * 3;
+		button.loadTexture('play_show');
+		SubboxHidden = true;
+	}
+	else
+	{
+		this.timer.resume();
+
+		this.box.y = this.y;
+		this.box.scale.set(23,3);
+
+		this.currtxt.alpha = 1;
+
+		this.hide_button.y = this.y;
+		button.loadTexture('play_hide');
+		SubboxHidden = false;
+	}
+	
 }
