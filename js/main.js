@@ -11,7 +11,7 @@ var justLoaded = false;
 
 //	current level player is up to
 var currlvl = 0;
-var unlockedlvl = 1;
+var unlockedlvl = 17;
 
 // sound variables
 var click_sound;
@@ -20,7 +20,7 @@ var win_sound;
 var drop_sound;
 var piano_song;
 
-var music_isplaying = false;
+var music_isplaying = true;
 
 //	Get the style from the css file
 var style;
@@ -121,8 +121,8 @@ PreloadState.prototype =
 		game.load.image('controls', 'img/buttons/help.png');
 		game.load.image('hintH', 'img/buttons/hint_highlight.png');
 		game.load.image('next', 'img/buttons/next.png');
-		game.load.image('grinder', 'img/buttons/brain.png');
-		game.load.image('grinderfill', 'img/buttons/brain_fill.png');
+		game.load.image('grinder', 'img/buttons/grinder button.png');
+		game.load.image('grinderfill', 'img/buttons/grinder button fill.png');
 
 		//	Game sprites
 		game.load.image('lvl1', 'img/sprites/sprite1.png');
@@ -147,6 +147,12 @@ PreloadState.prototype =
 		//	Level select icons
 		game.load.atlas('iconsAtlas','img/lvl_icons/lvl_icons.png','img/lvl_icons/lvl_icons.json');
 
+		//	Voice clips
+		for (var i = 1; i <= totalLvls; i++)
+		{
+			game.load.audio('line_'+i, 'audio/voice/line_'+i+'.ogg');
+		}
+
 		//	Sound assets
 		game.load.audio('swish', 'audio/se/Swish.ogg');
 		game.load.audio('click', 'audio/se/click.wav');
@@ -170,7 +176,12 @@ PreloadState.prototype =
 
 		piano_song = game.add.audio('song1');
 
-		//piano_song.play('',0,0.75,true);
+		//piano_song.play('',0,0.25,true);
+		//	Voice clips
+		for (var i = 1; i <= totalLvls; i++)
+		{
+			narr[i-1] = game.add.audio('line_'+i);
+		}
 
     	game.input.mouse.capture = true;
 	},
@@ -204,6 +215,7 @@ StartState.prototype =
 		//	Background
 		game.add.image(0,0,'bg');
 		game.add.image(0,0,'title');
+		piano_song.play('',0,0.25,true);
 
 		//	Set level data
 		setLevels();
@@ -213,23 +225,23 @@ StartState.prototype =
 		start_button.scale.setTo(3);
 		start_button.tint = randomColor();
 
-		if(currlvl!=0)
+		if(justLoaded)
 		{
 			continue_button = game.add.button(game.width/2, game.height/2 + 48, 'continue', continueOnClick, this);
 			continue_button.anchor.setTo(0.5);
 			continue_button.scale.setTo(3);
 			continue_button.tint = randomColor();
+
+			lvlsel_button = game.add.button(game.width/2, game.height/2 + 48 * 4, 'lvlsel', lvlselOnClick, this);
+			lvlsel_button.anchor.setTo(0.5);
+			lvlsel_button.scale.setTo(3);
+			lvlsel_button.tint = randomColor();
 		}
 
 		credits_button = game.add.button(game.width/2, game.height/2 + 48 * 3, 'credits', creditsOnClick, this);
 		credits_button.anchor.setTo(0.5);
 		credits_button.scale.setTo(3);
 		credits_button.tint = randomColor();
-
-		lvlsel_button = game.add.button(game.width/2, game.height/2 + 48 * 4, 'lvlsel', lvlselOnClick, this);
-		lvlsel_button.anchor.setTo(0.5);
-		lvlsel_button.scale.setTo(3);
-		lvlsel_button.tint = randomColor();
 
 		TopUI(game);
 
@@ -273,7 +285,7 @@ PlayState.prototype =
 
 		//	Load a new narration and subtitles into the level
 		this.Narritive = new Subbox(game,
-			texts[currlvl]);
+			texts[currlvl],narr[currlvl]);
 
 		//	Load the level sprite
 		this.lvlsprte = game.add.image( this.level.x + pos[currlvl].imgoffSetX, 
@@ -330,7 +342,7 @@ GameOver.prototype =
 		game.add.image(0,0,'bg');
 
 		this.wintext = game.add.text(16, 48, 
-			'Congradulations, you have beaten the demo\nClick to start again', { fontSize: '32px', fill: '#fff' });
+			'Congradulations, you have beaten the demo\nClick to start again\ninsert credits here', { fontSize: '32px', fill: '#fff' });
 		currlvl = 0;
 
 		TopUI(game);

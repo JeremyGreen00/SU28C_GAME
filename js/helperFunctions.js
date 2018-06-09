@@ -38,13 +38,14 @@ var musicOnClick = function(button)
 {
 	if (music_isplaying == false)
 	{
-		piano_song.play('',0,0.5,true);
+		//piano_song.play('',0,0.25,true);
+		piano_song.mute = false;
 		button.loadTexture('musicOn');
 		music_isplaying = true;
 	}
 	else
 	{
-		piano_song.stop();
+		piano_song.mute = true;
 		button.loadTexture('musicOff');
 		music_isplaying = false;
 	}
@@ -53,9 +54,10 @@ var musicOnClick = function(button)
 //	Reset button
 var resetOnClick = function(button)
 {
-	setLevels();
-	fadeOut(game.state.getCurrentState().key, 20);
+	//setLevels();
+	//fadeOut(game.state.getCurrentState().key, 20);
 	//game.state.restart();
+	if(reset_button.puzreset!=null) reset_button.puzreset.reset();
 }
 
 //	starts game
@@ -114,23 +116,25 @@ var blockOnClick = function(button)
 {
 	if (button.canSpawn && victory == false) 
 	{
-		button.lvl.addp(712 + Math.random()*8, 344 + Math.random()*8, [{x:0,y:0}]);
+		button.lvl.addp(700 + Math.random()*8, 344 + Math.random()*8, [{x:0,y:0}]);
 
 		button.canSpawn = false;
 
 		// 	Set to true so timer auto destroys once done
 		var timer = game.time.create(true);
 
+		button.img.scale.x = 0;
 		button.img.scale.y = 0;
 
 		//	Add a timed event
-		for (var i = 0; i < 251; i++) 
+		for (var i = 0; i < 450; i++) 
 		{
 			timer.add( i * 10, 
 				function(timevar)
 				{
-					button.img.scale.y += 0.01;
-					if(button.img.scale.y >= 2.5) button.canSpawn = true;
+					button.img.scale.x += 0.001;
+					button.img.scale.y += 0.001;
+					if(button.img.scale.y >= 0.45) button.canSpawn = true;
 				},
 				this);
 		}
@@ -141,7 +145,7 @@ var blockOnClick = function(button)
 }
 
 //	Generate menu ui buttons
-var TopUI = function(game)
+var TopUI = function(game, lvl)
 {
 	//	Description text
 	desc_text = game.add.text(4, 40, '', { font: 'Press Start 2P', fontSize: '16px', fill: '#000'});
@@ -156,37 +160,39 @@ var TopUI = function(game)
 	if (music_isplaying)
 	{
 		music_button = game.add.button(4*2 + 32, 4, 'musicOn', musicOnClick, this);
+
 	}
 	else 
 	{
 		music_button = game.add.button(4*2 + 32, 4, 'musicOff', musicOnClick, this);
 	}
 	music_button.scale.setTo(2);
-	music_button.onInputOver.add(function() {desc_text.text = 'music';}, this);
+	music_button.onInputOver.add(function() {desc_text.text = '  music';}, this);
 	music_button.onInputOut.add(function() {desc_text.text = '';}, this);
 
 	//	Reset button
 	reset_button = game.add.button(4*3 + 32*2, 4, 'reset', resetOnClick, this);
 	reset_button.scale.setTo(2);
-	reset_button.onInputOver.add(function() {desc_text.text = 'reset';}, this);
+	reset_button.onInputOver.add(function() {desc_text.text = '    reset';}, this);
 	reset_button.onInputOut.add(function() {desc_text.text = '';}, this);
+	if(lvl != null) reset_button.puzreset = lvl.level;
 
 	//  controls button to display controls
 	control_button = game.add.button(4*4 + 32*3, 4, 'controls', controlsOnClick, this);
 	control_button.scale.setTo(2);
 	control_button.disptxt = game.add.text(game.width/2, 40, 
-		'Click and drag pieces\nCover the grid\nDouble click to rotate',
+		'Click and drag pieces\nCover the grid\nRight click to rotate',
 		 { font: 'Press Start 2P', fontSize: '16px', fill: '#000', align: 'center'});
-	control_button.disptxt.alpha = 0;
+	if (currlvl != 0) control_button.disptxt.alpha = 0;
 	control_button.disptxt.anchor.setTo(0.5,0);
-	control_button.onInputOver.add(function() {desc_text.text = 'controls';}, this);
+	control_button.onInputOver.add(function() {desc_text.text = '      controls';}, this);
 	control_button.onInputOut.add(function() {desc_text.text = '';}, this);
 }
 
 //	Create general assets
 var basicScene = function(game, lvl)
 {
-	TopUI(game);
+	TopUI(game, lvl);
 
 	//	Show current level no
 	var l = game.add.text(game.width/2, 4, 'LEVEL: ' + (currlvl + 1), { fontSize: '16px', fill: '#000' });
@@ -204,15 +210,19 @@ var basicScene = function(game, lvl)
 	hint_button.currlvl = lvl.level;
 
 	//	The button for spawning new pieces
-	grindbutton = game.add.button(game.width - 64, game.height - 128, 'grinder', blockOnClick, this);
-	grindbutton.scale.setTo(2.5);
-	grindbutton.anchor.setTo(0.5,1);
-	grindbutton.lvl = lvl.level;
-	grindbutton.img = game.add.image( grindbutton.x, grindbutton.y, 'grinderfill');
-	grindbutton.img.anchor.setTo(0.5,1);
-	grindbutton.img.scale.setTo(2.5);
-	grindbutton.img.alpha = 0.5;
-	grindbutton.canSpawn = true;
+	if(currlvl>=11)
+	{
+		var gri_img = game.add.image( game.width - 64 - 16, game.height - 128 - 40, 'grinderfill');
+		grindbutton = game.add.button(game.width - 64 - 16, game.height - 128 - 40, 'grinder', blockOnClick, this);
+		grindbutton.anchor.setTo(0.5,0.5);
+		grindbutton.scale.setTo(0.5);
+		grindbutton.lvl = lvl.level;
+		grindbutton.img = gri_img;
+		grindbutton.img.anchor.setTo(0.5,0.5);
+		grindbutton.img.scale.setTo(0.5);
+		grindbutton.canSpawn = true;
+
+	}
 
 	lvl.levelwon = false;
 }

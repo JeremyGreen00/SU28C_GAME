@@ -155,6 +155,7 @@ Puzzle.prototype.addp = function(x,y,shape)
 	var p = new PPiece(x, y, shape);
 	p.checkBounds();
 	this.CHUNKS.push(p);
+	this.chunckSizes.push(shape.length);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -319,4 +320,30 @@ Puzzle.prototype.hint = function(chunckIndex)
 		//var i = Math.floor(Math.random() * this.chunckSizes.length)
 	}
 		
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	PUZZLE PREFAB
+// 	Resets current puzzle pieces
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Puzzle.prototype.reset = function() 
+{
+	var j = 0;
+	//	Calculate and place all pieces into the upper canvas
+	for (var i = 0; i < this.CHUNKS.length; i++) 
+	{
+		var chunkx = Math.random()*16 + (j * gridSize + 32) % game.width;
+		var chunky = Math.random()*16 + 64 + Math.floor((j * gridSize + 32) / game.width)*gridSize*3;
+
+		this.CHUNKS[i].x = chunkx;
+		this.CHUNKS[i].y = chunky;
+		this.CHUNKS[i].unlock();
+		this.CHUNKS[i].checkBounds();
+
+		j = j + this.chunckSizes[i];
+	}
 }
