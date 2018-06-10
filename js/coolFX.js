@@ -15,10 +15,16 @@
 //	fade out of a scene in style
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//	used to fix a bug
+var can_change_state = true;
+
 //	Fade out from a scene
 var fadeOut = function(next_scene, speed = 100)
 {
+	//	Sizes of each individual square
 	var fadegrid = 100;
+
+	can_change_state = false;
 
 	if (this.isFading === undefined) this.isFading = false;
 
@@ -31,6 +37,7 @@ var fadeOut = function(next_scene, speed = 100)
 
 		this.boxes = [];
 
+		//	Expand square to grid size 100
 		var runExpand = function(b)
 		{
 			if(b.scale.x * (b.width-1) <= fadegrid * 3 + 10)
@@ -44,6 +51,7 @@ var fadeOut = function(next_scene, speed = 100)
 			}
 		}
 
+		//	Generate all the boxes for screen transition
 		for ( var i = 0; i < game.width / fadegrid; i++ )
 		{
 			for ( var j = 0; j < game.height / fadegrid; j++ )
@@ -63,6 +71,7 @@ var fadeOut = function(next_scene, speed = 100)
 		var i = 0;
 		var lim = game.height / fadegrid;
 
+		//	Set up a timing mechanism so each square eventuall fills whole screen
 		this.boxes.forEach(function(box) 
 		{
 			var bx = i % lim;
@@ -77,7 +86,7 @@ var fadeOut = function(next_scene, speed = 100)
 			i++;
 		});
 
-		//	Run the loop
+		//	When done load next scene
 		this.timer.add( ((game.width / fadegrid) + (game.height / fadegrid)) * speed + fadegrid, 
 			function(timer) 
 			{
@@ -140,6 +149,7 @@ var fadein = function(speed = 100)
 	var i = 0;
 	var lim = game.height / fadegrid;
 
+	//	Generate all the boxes and setup to shrink away
 	this.boxes.forEach(function(box) 
 	{
 		var bx = i % lim;
@@ -154,10 +164,11 @@ var fadein = function(speed = 100)
 		i++;
 	});
 
-	//	Run the loop
-	this.timer.add( ((game.width / fadegrid) + (game.height / fadegrid)) * 100 + speed * 40, 
+	//	removes the events from the game after effect is done
+	this.timer.add( ((game.width / fadegrid) + (game.height / fadegrid)) * speed + fadegrid * 4, 
 		function(timer) 
 		{
+			can_change_state = true;
 			for (var i=0; i<timerEvents.length; i++)
 			{ 
 				game.time.events.remove(timerEvents[i]); 

@@ -77,13 +77,13 @@ var music_change = function(newSong)
 	{
 		restless_song.fadeOut(4000);
 		corp_song.fadeOut(4000);
-		piano_song.fadeIn(4000,true);
+		piano_song.play('',0,0,true);
 		piano_song.fadeTo(4000,song_volume);
 		curr_song = 'song1';
 	}
 	else if(newSong == 'song2' && curr_song != 'song2')
 	{
-		restless_song.fadeIn(4000,true);
+		restless_song.play('',0,0,true);
 		corp_song.fadeOut(4000);
 		piano_song.fadeOut(4000);
 		restless_song.fadeTo(4000,song_volume);
@@ -92,9 +92,40 @@ var music_change = function(newSong)
 	else if(newSong == 'song3' && curr_song != 'song3')
 	{
 		restless_song.fadeOut(4000);
-		corp_song.fadeIn(4000,true);
+		corp_song.play('',0,0,true);
 		piano_song.fadeOut(4000);
 		corp_song.fadeTo(4000,song_volume);
+		curr_song = 'song3';
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	HELPER FUNCTIONS
+//	avoid overlapping music
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var music_overlap = function()
+{
+	if(curr_song == 'song1')
+	{
+		restless_song.stop();
+		corp_song.stop();
+		piano_song.volume = song_volume;
+		curr_song = 'song1';
+	}
+	else if(curr_song == 'song2')
+	{
+		corp_song.stop();
+		piano_song.stop();
+		restless_song.volume = song_volume;
+		curr_song = 'song2';
+	}
+	else if(curr_song == 'song3')
+	{
+		restless_song.stop();
+		piano_song.stop();
+		corp_song.volume = song_volume;
 		curr_song = 'song3';
 	}
 }
@@ -151,13 +182,18 @@ var controlsOnClick = function(button)
 //	Return to menu
 var menuOnClick = function(button)
 {
-	if(button.narr_ref != null) button.narr_ref.stop();
-	fadeOut('Start', 20);
+	if(can_change_state)
+	{
+		music_overlap();
+		if(button.narr_ref != null) button.narr_ref.stop();
+		fadeOut('Start', 20);
+	}
 }
 
 //	Loads the next state
 var nextlvlOnClick = function(button)
 {
+	music_overlap();
 	currlvl++;
 	if (currlvl<totalLvls) 
 		fadeOut('Play',20);

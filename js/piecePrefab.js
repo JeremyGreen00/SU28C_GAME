@@ -218,14 +218,17 @@ PPiece.prototype.update = function()
 		justPlaced = true;
 	}
 
-	//	Rotation reset
-	if (game.input.activePointer.isUp || 
-		game.input.activePointer.rightButton.justReleased()) this.canRotate = true;
+	var doubleclick = (game.input.activePointer.isDown && 
+						game.input.activePointer.msSinceLastClick < 200 && highlight)
+	var rightclick = game.input.activePointer.rightButton.isDown && this.moving;
 
+	if(rightclick) doubleclick = false;
+
+	//	Rotation reset
+	if (!doubleclick && !rightclick) this.canRotate = true;
+	
 	//	Rotate on input
-	if(((game.input.activePointer.isDown && game.input.activePointer.msSinceLastClick < 200) ||
-		game.input.activePointer.rightButton.isDown) && 
-		(highlight || this.moving)
+	if(( doubleclick || rightclick)
 		&& this.canRotate) 
 	{
 		this.rotate();

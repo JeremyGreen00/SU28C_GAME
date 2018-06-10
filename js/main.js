@@ -25,12 +25,14 @@ var piano_song;
 var restless_song;
 var corp_song;
 var curr_song = 'song1';
-var song_volume = 0.1;
+var song_volume = 0.05;
 
 var music_isplaying = true;
 
 //	Get the style from the css file
 var style;
+
+var createText;
 
 //  The Google WebFont Loader.
 WebFontConfig = 
@@ -110,6 +112,10 @@ PreloadState.prototype =
 		game.load.image('volumemute', 'img/buttons/volumemute.png');
 		game.load.image('reset', 'img/buttons/reset.png');
 		game.load.image('help', 'img/buttons/help.png');
+
+		//	Credits
+		game.load.image('credits', 'img/credit_scene.png');
+
 		//	Level select icons
 		game.load.atlas('iconsAtlas','img/lvl_icons/lvl_icons.png','img/lvl_icons/lvl_icons.json');
 		game.load.atlas('bbb','img/bbb.png','img/bbb.json',Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
@@ -125,7 +131,7 @@ PreloadState.prototype =
 		game.load.audio('click', 'audio/se/click.wav');
 		game.load.audio('drop', 'audio/se/dropdown.ogg');
 		game.load.audio('win', 'audio/se/win.wav');
-		game.load.audio('grind_se', 'audio/se/Chomp.ogg');
+		game.load.audio('grind_se', 'audio/se/turning.ogg');
 
 		//	Music
 		game.load.audio('song1', 'audio/bgm/storytelling-piano.ogg');
@@ -294,11 +300,11 @@ PlayState.prototype =
 		basicScene(game,this);
 
 		//	Set appropriat music
-		if(currlvl>=0 && currlvl<=10)
+		if(currlvl>=0 && currlvl<=5)
 			music_change('song1');
-		else if(currlvl>=11 && currlvl<=15)
+		else if(currlvl>=6 && currlvl<=11)
 			music_change('song2');
-		else if(currlvl>=16 && currlvl<=17)
+		else if(currlvl>=12 && currlvl<=17)
 			music_change('song3');
 
 
@@ -320,7 +326,7 @@ PlayState.prototype =
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	GAME OVER STATE
-//	Probably won't need this but keep for now
+//	Shows credits
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var GameOver = function(game) {};
 GameOver.prototype = 
@@ -332,17 +338,13 @@ GameOver.prototype =
 		//  Background
 		game.stage.backgroundColor = '#eeeeee';
 		game.add.image(0,0,'bbb','background');
+		game.add.image(0,0,'credits');
 
-		this.wintext = game.add.text(game.width/2, 128, 
-			'Credits:\nLevel design, writing and sound: Yuming Li'+
-			'\nProgramming and voice over: Jeremy Green' +
-			'\nArt and animation: Bob Liu', { fontSize: '32px', fill: '#000',align: 'center' });
-		this.wintext.anchor.setTo(0.5,0);
 		currlvl = 0;
 
 		TopUI(game);
 
-		back_button = game.add.button(game.width/2, game.height- 128, 'bbb', 
+		back_button = game.add.button(game.width/2, game.height- 64, 'bbb', 
 			function(button) 
 			{
 				//console.log(currlvl);
