@@ -183,7 +183,7 @@ var TopUI = function(game, lvl)
 	control_button.disptxt = game.add.text(game.width/2, 40, 
 		'Click and drag pieces\nCover the grid\nRight click to rotate',
 		 { font: 'Press Start 2P', fontSize: '16px', fill: '#000', align: 'center'});
-	if (currlvl != 0) control_button.disptxt.alpha = 0;
+	if (currlvl != 0 || lvl == null) control_button.disptxt.alpha = 0;
 	control_button.disptxt.anchor.setTo(0.5,0);
 	control_button.onInputOver.add(function() {desc_text.text = '      controls';}, this);
 	control_button.onInputOut.add(function() {desc_text.text = '';}, this);

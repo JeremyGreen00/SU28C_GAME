@@ -11,7 +11,7 @@ var justLoaded = false;
 
 //	current level player is up to
 var currlvl = 0;
-var unlockedlvl = 17;
+var unlockedlvl = 1;
 
 // sound variables
 var click_sound;
@@ -121,6 +121,7 @@ PreloadState.prototype =
 		game.load.image('controls', 'img/buttons/help.png');
 		game.load.image('hintH', 'img/buttons/hint_highlight.png');
 		game.load.image('next', 'img/buttons/next.png');
+		game.load.image('back', 'img/buttons/back.png');
 		game.load.image('grinder', 'img/buttons/grinder button.png');
 		game.load.image('grinderfill', 'img/buttons/grinder button fill.png');
 
@@ -176,6 +177,10 @@ PreloadState.prototype =
 
 		piano_song = game.add.audio('song1');
 
+		this.loadimg = game.add.image(game.width/2,game.height/2,'piece');
+		this.loadimg.anchor.setTo(0.5);
+		this.loadimg.tint = randomColor();
+
 		//piano_song.play('',0,0.25,true);
 		//	Voice clips
 		for (var i = 1; i <= totalLvls; i++)
@@ -193,6 +198,7 @@ PreloadState.prototype =
 		{
 			game.state.start('Start');
 		}
+		this.loadimg.angle += 1;
 	}
 }
 
@@ -341,21 +347,30 @@ GameOver.prototype =
 		game.stage.backgroundColor = '#eeeeee';
 		game.add.image(0,0,'bg');
 
-		this.wintext = game.add.text(16, 48, 
-			'Congradulations, you have beaten the demo\nClick to start again\ninsert credits here', { fontSize: '32px', fill: '#fff' });
+		this.wintext = game.add.text(game.width/2, 128, 
+			'Credits:\nLevel design and sound: Yuming Li'+
+			'\nProgramming and voice over: Jeremy Green' +
+			'\nArt and animation: Bob Liu', { fontSize: '32px', fill: '#000',align: 'center' });
+		this.wintext.anchor.setTo(0.5,0);
 		currlvl = 0;
 
 		TopUI(game);
+
+		back_button = game.add.button(game.width/2, game.height- 128, 'back', 
+			function(button) 
+			{
+				//console.log(currlvl);
+				fadeOut('Start',30);
+			}, 
+		this);
+		back_button.scale.setTo(2);
+		back_button.anchor.setTo(0.5,1);
+
 		fadein(50);
 	},
 
 	update: function() 
 	{
-		// run game loop
-		if(game.input.activePointer.isDown)
-		{
-			fadeOut('Start',20);
-		}
 
 	}
 }

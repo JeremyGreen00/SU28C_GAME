@@ -20,6 +20,7 @@ var Subbox = function(game, dialogs, voice_over)
 	this.x = 32;
 	this.y = game.height * 0.8;
 	this.currline = 0;
+	this.canPlay = true;
 
 	//	init the lines of dialog
 	this.lines = dialogs;
@@ -34,10 +35,6 @@ var Subbox = function(game, dialogs, voice_over)
 	//	Contains text to display
 	this.currtxt = game.add.text(this.x + 16, this.y + 16, '', { fontSize: '16px', fill: '#fff' });
 	this.currtxt.font = 'Helvetica';
-
-	//	Signal if done
-	this.done = true;
-	this.start_narr();
 
 	//	Buttons
 	//	hide button
@@ -58,6 +55,11 @@ var Subbox = function(game, dialogs, voice_over)
 	this.replay_button.scale.setTo(2);
 	this.replay_button.anchor.setTo(0,1);
 
+	//	Signal if done
+	this.done = true;
+	this.timer = null;
+	this.start_narr();
+
 	if (SubboxHidden) 
 	{
 		SubboxHidden = false;
@@ -74,7 +76,7 @@ Subbox.prototype.set = function(val)
 
 Subbox.prototype.start_narr = function() 
 {
-	if(this.done)
+	if(this.done && this.canPlay)
 	{
 
 		this.vo.stop();
@@ -83,6 +85,7 @@ Subbox.prototype.start_narr = function()
 		this.currtxt.text = "";
 
 		// 	Set to true so timer auto destroys once done
+		if(this.timer != null) this.timer.destroy();
 		this.timer = game.time.create(true);
 
 		//	Add a timed event for every line
@@ -97,9 +100,11 @@ Subbox.prototype.start_narr = function()
 
 		if(SubboxMute) this.vo.mute = true;
 
-		//	Signal if done
-		this.done = false;
+		if(!this.isplaying) this.pause(this.pause_button);
 	}
+
+	//	Signal if done
+	this.done = false;
 
 }
 
@@ -108,12 +113,15 @@ Subbox.prototype.nextLine = function()
 	this.currtxt.text += this.lines[this.currline];
 	this.currline++;
 
-	if(this.currline >= this.lines.length) this.done = true;
+	if(this.currline >= this.lines.length) 
+	{
+		this.done = true;
+	}
 }
 
 Subbox.prototype.stop = function() 
 {
-	
+	this.canPlay = false;
 	this.timer.stop();
 	this.vo.stop();
 }
@@ -145,7 +153,7 @@ Subbox.prototype.pause = function(button)
 	}
 	else
 	{
-		isplaying = true;
+		this.isplaying = true;
 		this.timer.resume();
 		this.vo.resume();
 		button.loadTexture('pause');
@@ -164,7 +172,7 @@ Subbox.prototype.hide = function(button)
 		this.hide_button.y = this.y + 32 * 3;
 		this.pause_button.y = this.y + 32 * 3;
 		this.mute_button.y = this.y + 32 * 3;
-		this.replay_button = this.y + 32 * 3;
+		this.replay_button.y = this.y + 32 * 3;
 		button.loadTexture('play_show');
 		SubboxHidden = true;
 	}
@@ -178,7 +186,7 @@ Subbox.prototype.hide = function(button)
 		this.hide_button.y = this.y;
 		this.pause_button.y = this.y;
 		this.mute_button.y = this.y;
-		this.replay_button = this.y;
+		this.replay_button.y = this.y;
 		button.loadTexture('play_hide');
 		SubboxHidden = false;
 	}
