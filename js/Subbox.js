@@ -28,7 +28,7 @@ var Subbox = function(game, dialogs, voice_over)
 	this.isplaying = true;
 
 	//	init the text box
-	this.box = game.add.image(this.x, this.y,'shadow');
+	this.box = game.add.image(this.x, this.y,'bbb','blackbox');
 	this.box.scale.set(23,3);
 	this.box.alpha = 0.5;
 
@@ -46,8 +46,9 @@ var Subbox = function(game, dialogs, voice_over)
 	this.pause_button.scale.setTo(2);
 	this.pause_button.anchor.setTo(0,1);
 
-	if(SubboxMute) this.mute_button = game.add.button(this.x + 64 + 8, this.y, 'musicOff', this.mute, this);
-	else this.mute_button = game.add.button(this.x + 64 + 8, this.y, 'musicOn', this.mute, this);
+	if(SubboxMute) this.mute_button = game.add.button(this.x + 64 + 8, this.y, 'bbb', this.mute, this,
+		'volumemute', 'volumemute', 'volumemute');
+	else this.mute_button = game.add.button(this.x + 64 + 8, this.y, 'volume', this.mute, this);
 	this.mute_button.scale.setTo(2);
 	this.mute_button.anchor.setTo(0,1);
 
@@ -132,13 +133,13 @@ Subbox.prototype.mute = function(button)
 	{
 		SubboxMute = false;
 		this.vo.mute = false;
-		button.loadTexture('musicOn');
+		button.loadTexture('volume');
 	}
 	else
 	{
 		SubboxMute = true;
 		this.vo.mute = true;
-		button.loadTexture('musicOff');
+		button.loadTexture('volumemute');
 	}
 }
 

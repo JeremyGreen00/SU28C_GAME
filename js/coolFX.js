@@ -49,7 +49,7 @@ var fadeOut = function(next_scene, speed = 100)
 			for ( var j = 0; j < game.height / fadegrid; j++ )
 			{
 				
-				var box = game.add.image(fadegrid/2 + i * fadegrid, fadegrid/2 + j * fadegrid, 'blankTile');
+				var box = game.add.image(fadegrid/2 + i * fadegrid, fadegrid/2 + j * fadegrid, 'bbb','whiteBox');
 				box.anchor.setTo(0.5);
 				box.scale.setTo(0);
 				box.tint =  0x808080;
@@ -126,7 +126,7 @@ var fadein = function(speed = 100)
 		for ( var j = 0; j < game.height / fadegrid; j++ )
 		{
 			
-			var box = game.add.image(fadegrid/2 + i * fadegrid, fadegrid/2 + j * fadegrid, 'blankTile');
+			var box = game.add.image(fadegrid/2 + i * fadegrid, fadegrid/2 + j * fadegrid, 'bbb','whiteBox');
 			box.anchor.setTo(0.5);
 			box.scale.setTo(3.5);
 			box.tint = 0x808080;

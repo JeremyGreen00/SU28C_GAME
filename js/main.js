@@ -18,7 +18,14 @@ var click_sound;
 var swish_sound;
 var win_sound;
 var drop_sound;
+var grind_sound;
+
+// songs
 var piano_song;
+var restless_song;
+var corp_song;
+var curr_song = 'song1';
+var song_volume = 0.1;
 
 var music_isplaying = true;
 
@@ -86,22 +93,9 @@ PreloadState.prototype =
 		game.stage.backgroundColor = style.getPropertyValue('background-color');
 
 		game.stage.smoothed = false;
-		//  Background 
-		game.load.image('bg', 'img/background.jpg');
-		game.load.image('blankTile', 'img/whiteBox.png')
 
 		//	Game pieces
 		game.load.image('piece', 'img/pieceGrey.png');
-		game.load.image('highlight', 'img/selectionGrey.png');
-		game.load.image('shell', 'img/shell.png');
-		game.load.image('shadow', 'img/blackbox.png');
-
-		//	Menu items
-		game.load.image('start', 'img/buttons/start.png');
-		game.load.image('credits', 'img/buttons/credit.png');
-		game.load.image('lvlsel', 'img/buttons/level select.png');
-		game.load.image('continue', 'img/buttons/continue.png');
-		game.load.image('title', 'img/main_menu.png');
 
 		//	Textbox items
 		game.load.image('play', 'img/buttons/play.png');
@@ -111,46 +105,18 @@ PreloadState.prototype =
 
 		//	Game buttons
 		//	icon
-		game.load.image('musicOn', 'img/buttons/volume.png');
-		game.load.image('musicOff', 'img/buttons/volume(mute).png');
-		game.load.image('reset', 'img/buttons/reset.png');
-		game.load.image('exit', 'img/buttons/exit.png');
-		//	text
 		game.load.image('menu', 'img/buttons/menu.png');
-		game.load.image('hint', 'img/buttons/hint.png');
-		game.load.image('controls', 'img/buttons/help.png');
-		game.load.image('hintH', 'img/buttons/hint_highlight.png');
-		game.load.image('next', 'img/buttons/next.png');
-		game.load.image('back', 'img/buttons/back.png');
-		game.load.image('grinder', 'img/buttons/grinder button.png');
-		game.load.image('grinderfill', 'img/buttons/grinder button fill.png');
-
-		//	Game sprites
-		game.load.image('lvl1', 'img/sprites/sprite1.png');
-		game.load.image('lvl2', 'img/sprites/sprite2.png');
-		game.load.image('lvl3', 'img/sprites/sprite3.png');
-		game.load.image('lvl4', 'img/sprites/sprite4.png');
-		game.load.image('lvl5', 'img/sprites/sprite5.png');
-		game.load.image('lvl6', 'img/sprites/sprite6.png');
-		game.load.image('lvl7', 'img/sprites/sprite7.png');
-		game.load.image('lvl8', 'img/sprites/sprite8.png');
-		game.load.image('lvl9', 'img/sprites/sprite9.png');
-		/*game.load.image('lvl10', 'img/sprites/sprite10.png');
-		game.load.image('lvl11', 'img/sprites/sprite11.png');
-		game.load.image('lvl12', 'img/sprites/sprite12.png');
-		game.load.image('lvl13', 'img/sprites/sprite13.png');
-		game.load.image('lvl14', 'img/sprites/sprite14.png');
-		game.load.image('lvl15', 'img/sprites/sprite15.png');
-		game.load.image('lvl16', 'img/sprites/sprite16.png');
-		game.load.image('lvl17', 'img/sprites/sprite17.png');
-		game.load.image('lvl18', 'img/sprites/sprite18.png');*/
-
+		game.load.image('volume', 'img/buttons/volume.png');
+		game.load.image('volumemute', 'img/buttons/volumemute.png');
+		game.load.image('reset', 'img/buttons/reset.png');
+		game.load.image('help', 'img/buttons/help.png');
 		//	Level select icons
 		game.load.atlas('iconsAtlas','img/lvl_icons/lvl_icons.png','img/lvl_icons/lvl_icons.json');
+		game.load.atlas('bbb','img/bbb.png','img/bbb.json',Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
 
-		//	Voice clips
 		for (var i = 1; i <= totalLvls; i++)
 		{
+			//	Voice clips
 			game.load.audio('line_'+i, 'audio/voice/line_'+i+'.ogg');
 		}
 
@@ -159,9 +125,12 @@ PreloadState.prototype =
 		game.load.audio('click', 'audio/se/click.wav');
 		game.load.audio('drop', 'audio/se/dropdown.ogg');
 		game.load.audio('win', 'audio/se/win.wav');
+		game.load.audio('grind_se', 'audio/se/Chomp.ogg');
 
 		//	Music
 		game.load.audio('song1', 'audio/bgm/storytelling-piano.ogg');
+		game.load.audio('song2', 'audio/bgm/restless.ogg');
+		game.load.audio('song3', 'audio/bgm/upbeat-corporate.ogg');
 
 		//  Load the Google WebFont Loader script
     	game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
@@ -174,8 +143,11 @@ PreloadState.prototype =
 		click_sound = game.add.audio('click');
 		win_sound = game.add.audio('win');
 		drop_sound = game.add.audio('drop');
+		grind_sound = game.add.audio('grind_se');
 
 		piano_song = game.add.audio('song1');
+		restless_song = game.add.audio('song2');
+		corp_song = game.add.audio('song3');
 
 		this.loadimg = game.add.image(game.width/2,game.height/2,'piece');
 		this.loadimg.anchor.setTo(0.5);
@@ -194,9 +166,10 @@ PreloadState.prototype =
 	update: function() 
 	{
 		// run game loop
-		if (game.cache.isSoundDecoded('song1'))
+		if (game.cache.isSoundDecoded('song1','song2','song3','line_1','line_2'))
 		{
 			game.state.start('Start');
+			piano_song.play('',0,song_volume,true);
 		}
 		this.loadimg.angle += 1;
 	}
@@ -219,35 +192,42 @@ StartState.prototype =
 	{
 		// create assets
 		//	Background
-		game.add.image(0,0,'bg');
-		game.add.image(0,0,'title');
-		piano_song.play('',0,0.25,true);
+		game.add.image(0,0,'bbb','background');
+		game.add.image(0,0,'bbb','main_menu');
 
 		//	Set level data
 		setLevels();
 
-		start_button = game.add.button(game.width/2, game.height/2 + 48 * 2, 'start', startOnClick, this);
+		//	Start at the beginning
+		start_button = game.add.button(game.width/2, game.height/2 + 48 * 2, 'bbb', startOnClick, this,
+			'start','start','start');
 		start_button.anchor.setTo(0.5);
 		start_button.scale.setTo(3);
 		start_button.tint = randomColor();
 
+		//	Continue button, go to current active level
 		if(justLoaded)
 		{
-			continue_button = game.add.button(game.width/2, game.height/2 + 48, 'continue', continueOnClick, this);
+			continue_button = game.add.button(game.width/2, game.height/2 + 48, 'bbb', continueOnClick, this,
+				'continue','continue','continue');
 			continue_button.anchor.setTo(0.5);
 			continue_button.scale.setTo(3);
 			continue_button.tint = randomColor();
-
-			lvlsel_button = game.add.button(game.width/2, game.height/2 + 48 * 4, 'lvlsel', lvlselOnClick, this);
-			lvlsel_button.anchor.setTo(0.5);
-			lvlsel_button.scale.setTo(3);
-			lvlsel_button.tint = randomColor();
 		}
 
-		credits_button = game.add.button(game.width/2, game.height/2 + 48 * 3, 'credits', creditsOnClick, this);
+		//	Credits button takes player to credits scene
+		credits_button = game.add.button(game.width/2, game.height/2 + 48 * 3, 'bbb', creditsOnClick, this,
+			'credit','credit','credit');
 		credits_button.anchor.setTo(0.5);
 		credits_button.scale.setTo(3);
 		credits_button.tint = randomColor();
+
+		//	Level select menu button
+		lvlsel_button = game.add.button(game.width/2, game.height/2 + 48 * 4, 'bbb', lvlselOnClick, this,
+			'level select','level select','level select');
+		lvlsel_button.anchor.setTo(0.5);
+		lvlsel_button.scale.setTo(3);
+		lvlsel_button.tint = randomColor();
 
 		TopUI(game);
 
@@ -279,7 +259,7 @@ PlayState.prototype =
 
 		//  Background
 		game.stage.backgroundColor = '#eeeeee';
-		game.add.image(0,0,'bg');
+		game.add.image(0,0,'bbb','background');
 
 		//	Load a new puzzle into the level
 		this.level = new Puzzle(game, 
@@ -294,9 +274,12 @@ PlayState.prototype =
 			texts[currlvl],narr[currlvl]);
 
 		//	Load the level sprite
-		this.lvlsprte = game.add.image( this.level.x + pos[currlvl].imgoffSetX, 
+		this.lvlsprte = game.add.sprite( this.level.x + pos[currlvl].imgoffSetX, 
 										this.level.y + pos[currlvl].imgoffSetY,
-										imgs[currlvl]);
+										'bbb',imgs[currlvl]);
+
+		//	Add animations if any
+		this.lvlsprte.animations.add('animation',animations[currlvl],6,animloop[currlvl]);
 		//	Make image invisible at start
 		this.lvlsprte.alpha = 0;
 		//	Scale the image so it's the right size
@@ -307,12 +290,20 @@ PlayState.prototype =
 		{
 			this.level.addp(64 + Math.random() * 600, 32 + Math.random() * 400,extrabits[currlvl][i]);
 		}
-
 		//  Setups basic buttons and functions
 		basicScene(game,this);
 
+		//	Set appropriat music
+		if(currlvl>=0 && currlvl<=10)
+			music_change('song1');
+		else if(currlvl>=11 && currlvl<=15)
+			music_change('song2');
+		else if(currlvl>=16 && currlvl<=17)
+			music_change('song3');
+
+
 		//game.time.advancedTiming = true;
-		//this.fpstext = game.add.text(16, 16, 'fps = ', { fontSize: '32px', fill: '#fff' });
+		//this.fpstext = game.add.text(16, 16+64, 'fps = ', { fontSize: '32px', fill: '#000' });
 
 		fadein(20);
 	},
@@ -334,21 +325,16 @@ PlayState.prototype =
 var GameOver = function(game) {};
 GameOver.prototype = 
 {
-	preload: function() 
-	{
-		// preload assets
-	},
-
 	create: function() 
 	{
 		// create assets
 
 		//  Background
 		game.stage.backgroundColor = '#eeeeee';
-		game.add.image(0,0,'bg');
+		game.add.image(0,0,'bbb','background');
 
 		this.wintext = game.add.text(game.width/2, 128, 
-			'Credits:\nLevel design and sound: Yuming Li'+
+			'Credits:\nLevel design, writing and sound: Yuming Li'+
 			'\nProgramming and voice over: Jeremy Green' +
 			'\nArt and animation: Bob Liu', { fontSize: '32px', fill: '#000',align: 'center' });
 		this.wintext.anchor.setTo(0.5,0);
@@ -356,22 +342,18 @@ GameOver.prototype =
 
 		TopUI(game);
 
-		back_button = game.add.button(game.width/2, game.height- 128, 'back', 
+		back_button = game.add.button(game.width/2, game.height- 128, 'bbb', 
 			function(button) 
 			{
 				//console.log(currlvl);
 				fadeOut('Start',30);
 			}, 
-		this);
-		back_button.scale.setTo(2);
+		this, 'back','back','back');
+		back_button.scale.setTo(4);
 		back_button.anchor.setTo(0.5,1);
+		back_button.tint = randomColor();
 
 		fadein(50);
-	},
-
-	update: function() 
-	{
-
 	}
 }
 
@@ -383,17 +365,12 @@ GameOver.prototype =
 var LvlSelState = function(game) {};
 LvlSelState.prototype = 
 {
-	preload: function() 
-	{
-		// preload assets
-	},
-
 	create: function() 
 	{
 
 		//  Background
 		game.stage.backgroundColor = '#eeeeee';
-		game.add.image(0,0,'bg');
+		game.add.image(0,0,'bbb','background');
 
 		//	Buttons
 		for (var i = 1; i <= totalLvls; i++) 
@@ -424,15 +401,23 @@ LvlSelState.prototype =
 			}
 		}
 
+		// button to unlock all levels
+		if(unlockedlvl != totalLvls)
+		{
+			unlocklvl_button = game.add.button(game.width/2, game.height - 48, 'bbb',
+				function(button) 
+				{
+					unlockedlvl = totalLvls;
+					fadeOut('lvlselect',20);
+				}, this, 'unlocklvls','unlocklvls','unlocklvls');
+			unlocklvl_button.anchor.setTo(0.5);
+			unlocklvl_button.scale.setTo(3);
+			unlocklvl_button.tint = randomColor();
+		}
+
 		TopUI(game);
 
 		fadein(20);
-	},
-
-	update: function() 
-	{
-		// run game loop
-
 	}
 }
 

@@ -60,7 +60,7 @@ var Puzzle = function(game, pos_x, pos_y, pieceSizes, shape, randomRotation)
 	{
 		//	Place appropiate 'shell' pieces
 		this.shells[i] = game.add.image(this.x + this.sh[i].x * gridSize, 
-						this.y + this.sh[i].y * gridSize,'shell');
+						this.y + this.sh[i].y * gridSize,'bbb','shell');
 
 		//	Create area to cover
 		this.coverage[i] = {	
@@ -251,18 +251,18 @@ Puzzle.prototype.hide = function()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	PUZZLE PREFAB
-// 	Shows the current puzzle from view
+// 	Shows the current puzzle from view (unused)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Puzzle.prototype.show = function() 
 {
 	for (var i = 0; i < this.sh.length; i++) 
 	{
-		//	Hide all shells
+		//	show all shells
 		this.shells[i].alpha = 1;
 	}
 
-	//	Hide all the pieces
+	//	show all the pieces
 	for (var i = 0; i < this.CHUNKS.length; i++) 
 	{
 		for (var j = 0; j < this.CHUNKS[i].s.length; j++) 
@@ -332,18 +332,21 @@ Puzzle.prototype.hint = function(chunckIndex)
 
 Puzzle.prototype.reset = function() 
 {
-	var j = 0;
-	//	Calculate and place all pieces into the upper canvas
-	for (var i = 0; i < this.CHUNKS.length; i++) 
+	if(this.shells[0].alpha == 1)
 	{
-		var chunkx = Math.random()*16 + (j * gridSize + 32) % game.width;
-		var chunky = Math.random()*16 + 64 + Math.floor((j * gridSize + 32) / game.width)*gridSize*3;
+		var j = 0;
+		//	Calculate and place all pieces into the upper canvas
+		for (var i = 0; i < this.CHUNKS.length; i++) 
+		{
+			var chunkx = Math.random()*16 + (j * gridSize + 32) % game.width;
+			var chunky = Math.random()*16 + 64 + Math.floor((j * gridSize + 32) / game.width)*gridSize*3;
 
-		this.CHUNKS[i].x = chunkx;
-		this.CHUNKS[i].y = chunky;
-		this.CHUNKS[i].unlock();
-		this.CHUNKS[i].checkBounds();
+			this.CHUNKS[i].x = chunkx;
+			this.CHUNKS[i].y = chunky;
+			this.CHUNKS[i].unlock();
+			this.CHUNKS[i].checkBounds();
 
-		j = j + this.chunckSizes[i];
+			j = j + this.chunckSizes[i];
+		}
 	}
 }

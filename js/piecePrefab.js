@@ -111,7 +111,7 @@ var PPiece = function(pos_x, pos_y, pos)
 	{
 		//	The shadows
 		this.shadow[i] = game.add.image(this.x + this.s[i].x * gridSize - 8, 
-										this.y + this.s[i].y * gridSize + 8,'shadow');
+										this.y + this.s[i].y * gridSize + 8,'bbb','blackbox');
 		this.shadow[i].alpha = 0.3;
 
 	}
@@ -119,12 +119,12 @@ var PPiece = function(pos_x, pos_y, pos)
 	{
 		//	The blocks
 		this.bits[i] = game.add.image(this.x + this.s[i].x * gridSize, 
-										this.y + this.s[i].y * gridSize,'piece');
+										this.y + this.s[i].y * gridSize,'bbb','pieceGrey');
 		this.bits[i].tint = this.color;
 
 		//	The highlight
 		this.highlighted[i] = game.add.image(this.x + this.s[i].x * gridSize, 
-										this.y + this.s[i].y * gridSize,'highlight');
+										this.y + this.s[i].y * gridSize,'bbb','selectionGrey');
 	}
 }
 
@@ -219,10 +219,11 @@ PPiece.prototype.update = function()
 	}
 
 	//	Rotation reset
-	if (!game.input.activePointer.isDown) this.canRotate = true;
+	if (game.input.activePointer.isUp || 
+		game.input.activePointer.rightButton.justReleased()) this.canRotate = true;
 
 	//	Rotate on input
-	if(((game.input.activePointer.isDown && game.input.activePointer.msSinceLastClick < 300) ||
+	if(((game.input.activePointer.isDown && game.input.activePointer.msSinceLastClick < 200) ||
 		game.input.activePointer.rightButton.isDown) && 
 		(highlight || this.moving)
 		&& this.canRotate) 
