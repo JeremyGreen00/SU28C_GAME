@@ -119,7 +119,7 @@ var PPiece = function(pos_x, pos_y, pos)
 	{
 		//	The blocks
 		this.bits[i] = game.add.image(this.x + this.s[i].x * gridSize, 
-										this.y + this.s[i].y * gridSize,'bbb','pieceGrey');
+										this.y + this.s[i].y * gridSize,'piece');
 		this.bits[i].tint = this.color;
 
 		//	The highlight

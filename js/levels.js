@@ -195,7 +195,7 @@ var setLevels = function()
 
     pieces[lc] = [4,3,4,3,3,3,4,4,3,3,3,3,3,3,4];
 
-	imgs[lc] = 'sprite6';
+	imgs[lc] = 'level 6 frame 1';
 	rot[lc] = true;
     
     texts[lc] = "   It might be overwhelming at first, but once you realize the limitation of what you "+
@@ -205,8 +205,9 @@ var setLevels = function()
 	extrabits[lc] = 
 		[];
 	hintbits[lc] = [1,2,3];
-	animations[lc] = [imgs[lc]];
-	animloop[lc] = false;
+	animations[lc] = ['level 6 frame 1','level 6 frame 2','level 6 frame 3','level 6 frame 4',
+					'level 6 frame 5'];
+	animloop[lc] = true;
 
     // Level 7
     ++lc;
@@ -260,7 +261,7 @@ var setLevels = function()
 
     pieces[lc] = [4,4,4,4,4,4,4,4,4,3,4,3,4,4,4];
 
-    imgs[lc] = 'sprite8';
+    imgs[lc] = 'level 8 frame 1';
     rot[lc] = true;
     
     texts[lc] = "   When you have turned your filtered ideas into beautiful visions, you might think that" +
@@ -269,8 +270,9 @@ var setLevels = function()
 	imgscale[lc] = 0.54 * 2;
 	extrabits[lc] = [];
 	hintbits[lc] = [9,10,11];
-	animations[lc] = [imgs[lc]];
-	animloop[lc] = false;
+	animations[lc] = ['level 8 frame 1','level 8 frame 2','level 8 frame 3','level 8 frame 4',
+					'level 8 frame 5'];
+	animloop[lc] = true;
     
     
     // Level 9

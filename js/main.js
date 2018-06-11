@@ -172,7 +172,7 @@ PreloadState.prototype =
 	update: function() 
 	{
 		// run game loop
-		if (game.cache.isSoundDecoded('song1','song2','song3','line_1','line_2'))
+		if (game.cache.isSoundDecoded('song1'))
 		{
 			game.state.start('Start');
 			piano_song.play('',0,song_volume,true);
@@ -235,7 +235,7 @@ StartState.prototype =
 		lvlsel_button.scale.setTo(3);
 		lvlsel_button.tint = randomColor();
 
-		TopUI(game);
+		TopUI(game, null);
 
 		if (justLoaded == false) fadein(100);
 		else fadein(20);
@@ -417,7 +417,7 @@ LvlSelState.prototype =
 			unlocklvl_button.tint = randomColor();
 		}
 
-		TopUI(game);
+		TopUI(game,null);
 
 		fadein(20);
 	}
